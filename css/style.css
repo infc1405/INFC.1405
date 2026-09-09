@@ -302,6 +302,79 @@ form.contact-form button:hover{ opacity:.9; }
 .contact-list .card{ display:flex; align-items:center; gap:14px; padding:16px 20px; }
 .contact-list .card span{ font-size:.9rem; color:var(--text-primary); }
 
+/* ---------- Gallery ---------- */
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+  gap:18px;
+}
+.gallery-item{
+  position:relative;
+  aspect-ratio:1/1;
+  border-radius:var(--radius);
+  overflow:hidden;
+  border:1px solid var(--card-border);
+  background:var(--card-bg);
+  cursor:pointer;
+}
+.gallery-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .35s;
+}
+.gallery-item:hover img{ transform:scale(1.06); }
+.gallery-item:hover{ border-color:var(--teal); }
+
+.gallery-empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:40px 20px;
+  border:1px dashed var(--card-border);
+  border-radius:var(--radius);
+  color:var(--text-muted);
+  font-family:var(--font-mono);
+  font-size:.85rem;
+}
+
+/* Lightbox */
+.lightbox-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(5,10,20,.88);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:30px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+  z-index:999;
+}
+.lightbox-overlay.open{ opacity:1; pointer-events:auto; }
+.lightbox-overlay img{
+  max-width:92vw;
+  max-height:86vh;
+  border-radius:12px;
+  box-shadow:0 0 40px rgba(45,212,191,.25);
+}
+.lightbox-close{
+  position:absolute;
+  top:22px;
+  right:26px;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:1px solid var(--card-border);
+  background:var(--card-bg);
+  color:var(--text-primary);
+  font-size:1.2rem;
+  cursor:pointer;
+  line-height:1;
+}
+.lightbox-close:hover{ border-color:var(--teal); color:var(--teal); }
+
 /* ================= FOOTER ================= */
 footer.site-footer{
   margin-top:70px;
