@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کافه لونا | Luna Café</title>
+<meta name="description" content="کافه لونا؛ قهوه‌ی تازه‌برشته، شیرینی خانگی و فضایی آرام تا پاسی از شب. نمونه‌کار طراحی وب گروه INFC.1405.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --espresso:#2B1912;
+  --brown:#4B2E1E;
+  --cream:#F5E9DA;
+  --copper:#C98B4B;
+  --cream-dim:rgba(245,233,218,.72);
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Vazirmatn",Tahoma,sans-serif;
+  background:var(--espresso);
+  color:var(--cream);
+  line-height:1.9;
+  -webkit-text-size-adjust:100%;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--copper);outline-offset:3px;border-radius:6px}
+.wrap{width:min(1100px,100% - 40px);margin-inline:auto}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:44px;height:44px;flex:none}
+.brand b{font-family:"Lalezar","Vazirmatn",sans-serif;font-size:1.5rem;font-weight:400;letter-spacing:.02em}
+.nav{display:flex;gap:20px;align-items:center;flex-wrap:wrap;font-size:.95rem}
+.nav a{text-decoration:none;color:var(--cream-dim)}
+.nav a:hover{color:var(--cream)}
+.status{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border:1px solid rgba(245,233,218,.3);border-radius:999px;font-size:.85rem}
+.status i{width:9px;height:9px;border-radius:50%;background:#8a7a6c;display:inline-block}
+.status.open i{background:#7bc47f}
+
+/* ---------- hero ---------- */
+.hero{display:grid;gap:28px;align-items:center;padding:24px 0 72px}
+.hero-art{display:flex;justify-content:center}
+.hero-art svg{width:min(320px,70vw);height:auto;overflow:visible}
+.hero h1{font-family:"Lalezar","Vazirmatn",sans-serif;font-weight:400;font-size:clamp(3.6rem,15vw,7.4rem);line-height:1.05}
+.hero .en{display:block;font-size:.95rem;letter-spacing:.4em;color:var(--copper);margin-top:6px;font-family:"Vazirmatn",sans-serif;direction:ltr;text-align:right}
+.hero p.sub{max-width:34ch;margin-top:18px;font-size:1.1rem;color:var(--cream-dim)}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-block;padding:11px 24px;border-radius:999px;text-decoration:none;font-weight:500;border:2px solid var(--copper);transition:background .2s,color .2s}
+.btn.solid{background:var(--copper);color:var(--espresso)}
+.btn.solid:hover{background:var(--cream);border-color:var(--cream)}
+.btn.ghost:hover{background:rgba(201,139,75,.18)}
+
+.steam path{animation:rise 4.5s ease-in-out infinite;opacity:.35}
+.steam path:nth-child(2){animation-delay:1.1s}
+.steam path:nth-child(3){animation-delay:2.2s}
+@keyframes rise{0%,100%{transform:translateY(6px);opacity:.15}50%{transform:translateY(-8px);opacity:.9}}
+
+@media(min-width:820px){
+  .hero{grid-template-columns:1.15fr .85fr;padding:40px 0 96px}
+  .hero-art{order:2}
+}
+
+/* ---------- facts strip ---------- */
+.facts{display:grid;gap:0;border-top:1px solid rgba(245,233,218,.18)}
+.facts div{padding:22px 0;border-bottom:1px solid rgba(245,233,218,.18)}
+.facts h3{font-size:1.1rem;color:var(--copper);font-weight:700}
+.facts p{color:var(--cream-dim);font-size:.97rem}
+@media(min-width:820px){
+  .facts{grid-template-columns:repeat(3,1fr);gap:40px;border-bottom:1px solid rgba(245,233,218,.18)}
+  .facts div{border-bottom:0}
+}
+
+/* ---------- menu (cream) ---------- */
+.menu{background:var(--cream);color:var(--brown);margin-top:80px;padding:72px 0}
+.menu h2,.visit h2{font-family:"Lalezar","Vazirmatn",sans-serif;font-weight:400;font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.2}
+.menu .note{font-size:.9rem;opacity:.75;margin-top:4px}
+.tabs{display:flex;gap:10px;margin:26px 0 8px;flex-wrap:wrap}
+.tabs button{font:inherit;cursor:pointer;padding:7px 20px;border-radius:999px;border:2px solid var(--brown);background:transparent;color:var(--brown)}
+.tabs button[aria-selected="true"]{background:var(--brown);color:var(--cream)}
+.list{list-style:none;max-width:640px}
+.list li{display:flex;align-items:baseline;gap:10px;padding:12px 0}
+.list .n{font-weight:500;font-size:1.08rem}
+.list .d{flex:1;border-bottom:2px dotted rgba(75,46,30,.45);transform:translateY(-4px)}
+.list .p{font-weight:700;color:#8a521c}
+.list small{display:block;font-weight:400;opacity:.75;font-size:.85rem;line-height:1.5}
+
+/* ---------- visit ---------- */
+.visit{padding:76px 0 56px}
+.visit .cols{display:grid;gap:36px;margin-top:26px}
+.hours{width:100%;max-width:420px;border-collapse:collapse}
+.hours td{padding:9px 0;border-bottom:1px solid rgba(245,233,218,.18)}
+.hours td:last-child{text-align:left;direction:ltr;color:var(--cream-dim)}
+.visit address{font-style:normal;color:var(--cream-dim)}
+.visit address b{color:var(--cream);display:block}
+@media(min-width:820px){.visit .cols{grid-template-columns:1fr 1fr}}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid rgba(245,233,218,.18);padding:22px 0 34px;font-size:.88rem;color:var(--cream-dim)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .steam path{animation:none;opacity:.6}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="کافه لونا">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="48" fill="#4B2E1E" stroke="#C98B4B" stroke-width="2"/>
+        <defs><mask id="bm"><rect width="100" height="100" fill="#fff"/><circle cx="60" cy="42" r="24" fill="#000"/></mask></defs>
+        <circle cx="48" cy="50" r="26" fill="#F5E9DA" mask="url(#bm)"/>
+      </svg>
+      <b>لونا</b>
+    </a>
+    <nav class="nav" aria-label="منوی صفحه">
+      <a href="#menu">منو</a>
+      <a href="#visit">ساعت کاری و آدرس</a>
+      <span class="status" id="status" role="status"><i></i><span>در حال بررسی…</span></span>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-text">
+        <h1>کافه لونا<span class="en">LUNA CAFÉ</span></h1>
+        <p class="sub">قهوه‌ی تازه‌برشته و شیرینی خانگی، برای ساعت‌هایی که شهر آرام می‌شود.</p>
+        <div class="cta">
+          <a class="btn solid" href="#menu">مشاهده منو</a>
+          <a class="btn ghost" href="https://wa.me/989120000000" target="_blank" rel="noopener">سفارش در واتساپ</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <svg viewBox="0 0 400 400" role="img" aria-label="هلال ماه و فنجان قهوه">
+          <defs>
+            <mask id="moon"><rect width="400" height="400" fill="#fff"/><circle cx="262" cy="160" r="128" fill="#000"/></mask>
+          </defs>
+          <circle cx="200" cy="200" r="150" fill="#F5E9DA" mask="url(#moon)"/>
+          <g class="steam" fill="none" stroke="#C98B4B" stroke-width="7" stroke-linecap="round">
+            <path d="M235 190C222 172 248 160 235 140"/>
+            <path d="M265 190C252 172 278 160 265 140"/>
+            <path d="M295 190C282 172 308 160 295 140"/>
+          </g>
+          <path fill="#C98B4B" d="M215 206h100v34q0 48-50 48t-50-48z"/>
+          <path fill="none" stroke="#C98B4B" stroke-width="12" stroke-linecap="round" d="M315 218q32 0 32 24t-38 24"/>
+          <rect x="198" y="298" width="134" height="8" rx="4" fill="#C98B4B"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="facts" aria-label="ویژگی‌های کافه">
+      <div><h3>دانه‌های تازه‌برشته</h3><p>قهوه را هر هفته در همین نزدیکی برشته می‌کنیم و تازه آسیاب می‌کنیم.</p></div>
+      <div><h3>شیرینی خانگی</h3><p>چیزکیک، براونی و کیک هویج هر روز صبح پخته می‌شود.</p></div>
+      <div><h3>تا پاسی از شب</h3><p>هر روز از ۸ صبح تا ۱۱ شب باز هستیم؛ جایی برای کتاب، لپ‌تاپ یا گفت‌وگو.</p></div>
+    </section>
+  </main>
+</div>
+
+<section class="menu" id="menu">
+  <div class="wrap">
+    <h2>منو</h2>
+    <p class="note">قیمت‌ها به هزار تومان و صرفاً نمونه است.</p>
+
+    <div class="tabs" role="tablist" aria-label="دسته‌بندی منو">
+      <button role="tab" aria-selected="true" aria-controls="p-coffee" id="t-coffee">قهوه</button>
+      <button role="tab" aria-selected="false" aria-controls="p-tea" id="t-tea">چای و دمنوش</button>
+      <button role="tab" aria-selected="false" aria-controls="p-sweet" id="t-sweet">شیرینی</button>
+    </div>
+
+    <ul class="list" id="p-coffee" role="tabpanel" aria-labelledby="t-coffee">
+      <li><span class="n">اسپرسو</span><span class="d"></span><span class="p">۹۵</span></li>
+      <li><span class="n">آمریکانو</span><span class="d"></span><span class="p">۱۱۰</span></li>
+      <li><span class="n">کاپوچینو</span><span class="d"></span><span class="p">۱۳۰</span></li>
+      <li><span class="n">لاته</span><span class="d"></span><span class="p">۱۳۵</span></li>
+      <li><span class="n">موکا</span><span class="d"></span><span class="p">۱۴۵</span></li>
+      <li><span class="n">قهوه ترک</span><span class="d"></span><span class="p">۱۰۰</span></li>
+    </ul>
+    <ul class="list" id="p-tea" role="tabpanel" aria-labelledby="t-tea" hidden>
+      <li><span class="n">چای سبز</span><span class="d"></span><span class="p">۷۵</span></li>
+      <li><span class="n">دمنوش بهارنارنج</span><span class="d"></span><span class="p">۸۵</span></li>
+      <li><span class="n">چای ماسالا</span><span class="d"></span><span class="p">۹۰</span></li>
+      <li><span class="n">هات‌چاکلت</span><span class="d"></span><span class="p">۱۲۰</span></li>
+    </ul>
+    <ul class="list" id="p-sweet" role="tabpanel" aria-labelledby="t-sweet" hidden>
+      <li><span class="n">کروسان کره‌ای</span><span class="d"></span><span class="p">۹۵</span></li>
+      <li><span class="n">کیک هویج</span><span class="d"></span><span class="p">۱۳۰</span></li>
+      <li><span class="n">براونی</span><span class="d"></span><span class="p">۱۴۰</span></li>
+      <li><span class="n">چیزکیک</span><span class="d"></span><span class="p">۱۶۰</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="visit" id="visit">
+  <div class="wrap">
+    <h2>ساعت کاری و آدرس</h2>
+    <div class="cols">
+      <table class="hours">
+        <caption class="sr" style="position:absolute;left:-9999px">ساعت کاری</caption>
+        <tr><td>شنبه تا پنجشنبه</td><td>۰۸:۰۰ – ۲۳:۰۰</td></tr>
+        <tr><td>جمعه</td><td>۰۹:۰۰ – ۲۳:۰۰</td></tr>
+      </table>
+      <div>
+        <address><b>آدرس نمونه</b>تهران، خیابان نمونه، پلاک ۱۴</address>
+        <div class="cta">
+          <a class="btn solid" href="https://wa.me/989120000000" target="_blank" rel="noopener">رزرو میز در واتساپ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© کافه لونا (نمونه‌کار)</span>
+    <span>طراحی: <a href="https://infc1405.github.io/INFC.1405/gallery.html">گروه INFC.1405</a></span>
+  </div>
+</footer>
+
+<script>
+// tabs
+(function(){
+  var tabs=document.querySelectorAll('[role="tab"]');
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(x){
+        var on=x===t;
+        x.setAttribute('aria-selected',on);
+        document.getElementById(x.getAttribute('aria-controls')).hidden=!on;
+      });
+    });
+  });
+})();
+
+// open/closed status (Tehran time, open 08:00-23:00 daily)
+(function(){
+  var el=document.getElementById('status');
+  function update(){
+    var h;
+    try{
+      h=parseInt(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tehran',hour:'numeric',hour12:false}).format(new Date()),10);
+    }catch(e){h=new Date().getHours();}
+    var open=h>=8&&h<23;
+    el.className='status'+(open?' open':'');
+    el.lastElementChild.textContent=open?'اکنون باز است':'اکنون بسته است';
+  }
+  update();setInterval(update,60000);
+})();
+</script>
+</body>
+</html>
