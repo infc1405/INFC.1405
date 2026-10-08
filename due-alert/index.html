@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INFC.DueAlert | یادآور چک و اقساط</title>
+<meta name="description" content="یادآور سررسید چک و بدهی/طلب مشتریان با تاریخ شمسی. داده‌ها فقط روی دستگاه شما ذخیره می‌شود.">
+<meta name="theme-color" content="#0f1a2e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
+<style>
+:root{
+  --bg:#0f1a2e;
+  --surface:#172640;
+  --surface2:#1d3050;
+  --line:rgba(120,200,200,.25);
+  --text:#e8eef7;
+  --dim:#9fb0c8;
+  --teal:#2dd4bf;
+  --red:#f87171;
+  --amber:#fbbf24;
+  --green:#4ade80;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Vazirmatn",Tahoma,sans-serif;background:var(--bg);color:var(--text);line-height:1.8;-webkit-text-size-adjust:100%}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+.wrap{width:100%;max-width:980px;margin-inline:auto;padding:0 16px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+header.top{padding:18px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header.top h1{font-size:1.35rem;font-weight:700;letter-spacing:.02em}
+header.top h1 span{color:var(--teal)}
+header.top p{font-size:.85rem;color:var(--dim)}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+
+button,.btn{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--text);padding:7px 14px;font-size:.9rem}
+button:hover{border-color:var(--teal)}
+button.primary{background:var(--teal);color:#06231f;border-color:var(--teal);font-weight:700}
+button.primary:hover{background:#5eead4}
+button.danger{color:var(--red)}
+button.small{padding:3px 10px;font-size:.8rem}
+
+.alert{margin:10px 0;padding:12px 14px;border-radius:12px;border:1px solid var(--amber);background:rgba(251,191,36,.1);font-size:.93rem}
+.alert.bad{border-color:var(--red);background:rgba(248,113,113,.1)}
+.alert[hidden]{display:none}
+
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.summary div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.summary small{display:block;color:var(--dim);font-size:.78rem}
+.summary b{font-size:1.05rem}
+.summary .r b{color:var(--red)}
+.summary .a b{color:var(--amber)}
+
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0}
+section.card h2{font-size:1.05rem;margin-bottom:10px;color:var(--teal)}
+
+.seg{display:flex;gap:8px;margin-bottom:12px}
+.seg button{flex:1;padding:9px}
+.seg button[aria-pressed="true"]{background:var(--teal);color:#06231f;border-color:var(--teal);font-weight:700}
+
+form .grid{display:grid;gap:12px}
+@media(min-width:640px){form .grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}}
+label{display:block;font-size:.85rem;color:var(--dim);margin-bottom:3px}
+input[type=text],input[type=number],input[type=search],textarea{width:100%;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+input.ltr{direction:ltr;text-align:right}
+.hint{font-size:.8rem;color:var(--dim);margin-top:2px;min-height:1.4em}
+.err{color:var(--red);font-size:.85rem;min-height:1.4em;margin-top:6px}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.filters button[aria-pressed="true"]{background:var(--surface2);border-color:var(--teal);color:var(--teal)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;min-width:760px;border-collapse:collapse;font-size:.9rem}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--surface2);color:var(--dim);font-weight:500;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.paid td{opacity:.55}
+td.amt{white-space:nowrap;font-weight:500}
+.badge{display:inline-block;padding:0 8px;border-radius:999px;font-size:.75rem;margin-inline-start:6px;white-space:nowrap}
+.badge.over{background:rgba(248,113,113,.18);color:var(--red)}
+.badge.soon{background:rgba(251,191,36,.18);color:var(--amber)}
+.badge.ok{background:rgba(74,222,128,.15);color:var(--green)}
+td.act{white-space:nowrap}
+td.act button{margin-inline-end:4px}
+.empty{padding:22px;text-align:center;color:var(--dim)}
+.printhead{display:none}
+footer{padding:22px 0 40px;color:var(--dim);font-size:.8rem;text-align:center}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .noprint,.alert,.summary,header.top .tools,form,.filters,.seg{display:none!important}
+  section.card{border:0;background:none;padding:0;margin:0}
+  section.card h2{display:none}
+  .printhead{display:block;margin-bottom:10px}
+  .tablewrap{overflow:visible;border:0}
+  table{min-width:0;font-size:10pt}
+  th{background:#eee;color:#000}
+  th,td{border:1px solid #888}
+  th.act,td.act{display:none}
+  tr.paid td{opacity:1;color:#555}
+  .badge{border:1px solid #888;background:none!important;color:#000!important}
+  header.top h1 span{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>INFC<span>.</span>DueAlert</h1>
+      <p>یادآور چک و اقساط · داده‌ها فقط روی همین دستگاه ذخیره می‌شود</p>
+    </div>
+    <div class="tools noprint">
+      <button id="btnInstall" hidden>نصب اپ</button>
+      <button id="btnPrint">چاپ / PDF</button>
+      <button id="btnExport">پشتیبان‌گیری</button>
+      <button id="btnImport">بازیابی</button>
+      <input type="file" id="fileImport" accept="application/json,.json" class="sr" tabindex="-1" aria-label="فایل پشتیبان">
+    </div>
+  </header>
+
+  <div id="alertBox" class="alert" hidden></div>
+
+  <div class="summary" id="summary">
+    <div><small>جمع در انتظار (ریال)</small><b id="sTotal">۰</b></div>
+    <div class="r"><small>سررسید گذشته</small><b id="sOver">۰</b></div>
+    <div class="a"><small>تا ۷ روز آینده</small><b id="sSoon">۰</b></div>
+  </div>
+
+  <section class="card noprint" aria-labelledby="formTitle">
+    <h2 id="formTitle">ثبت مورد جدید</h2>
+    <form id="form" novalidate>
+      <div class="seg" role="group" aria-label="نوع مورد">
+        <button type="button" id="typeCheck" aria-pressed="true">چک</button>
+        <button type="button" id="typeMisc" aria-pressed="false">متفرقه (فروش اعتباری)</button>
+      </div>
+      <div class="grid">
+        <div>
+          <label for="tdate">تاریخ معامله (شمسی)</label>
+          <input type="text" id="tdate" class="ltr" inputmode="numeric" autocomplete="off" placeholder="۱۴۰۵/۰۷/۱۶">
+          <div class="hint">مثال: ۱۴۰۵/۰۷/۱۶ — یا دکمه امروز را بزنید</div>
+        </div>
+        <div id="dueCheckBox">
+          <label for="dueDate">تاریخ سررسید چک (شمسی)</label>
+          <input type="text" id="dueDate" class="ltr" inputmode="numeric" autocomplete="off" placeholder="۱۴۰۵/۰۸/۱۶">
+        </div>
+        <div id="dueMiscBox" hidden>
+          <label for="dueDays">تعداد روز تا سررسید</label>
+          <input type="number" id="dueDays" class="ltr" inputmode="numeric" min="0" max="3650" placeholder="۳۰">
+          <div class="hint" id="duePreview"></div>
+        </div>
+        <div>
+          <label for="amount">مبلغ (ریال)</label>
+          <input type="text" id="amount" class="ltr" inputmode="numeric" autocomplete="off" placeholder="۵۰۰۰۰۰۰۰">
+          <div class="hint" id="amountPreview"></div>
+        </div>
+        <div>
+          <label for="invoice">شماره فاکتور</label>
+          <input type="text" id="invoice" autocomplete="off">
+        </div>
+        <div class="full">
+          <label for="desc">توضیحات</label>
+          <input type="text" id="desc" autocomplete="off" placeholder="مثلاً نام مشتری یا کالا">
+        </div>
+      </div>
+      <div class="err" id="formErr" role="alert"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button type="submit" class="primary">ثبت</button>
+        <button type="button" id="btnToday">امروز</button>
+        <button type="reset" id="btnReset">پاک کردن فرم</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card" aria-labelledby="listTitle">
+    <h2 id="listTitle">فهرست</h2>
+    <div class="printhead"><b>گزارش سررسیدها — INFC.DueAlert</b><br><span id="printDate"></span></div>
+    <div class="filters noprint" role="group" aria-label="فیلتر فهرست">
+      <button type="button" data-f="pending" aria-pressed="true">در انتظار</button>
+      <button type="button" data-f="paid" aria-pressed="false">تسویه‌شده</button>
+      <button type="button" data-f="all" aria-pressed="false">همه</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ردیف</th><th>تاریخ معامله</th><th>نوع</th><th>سررسید</th>
+            <th>مبلغ (ریال)</th><th>شماره فاکتور</th><th>توضیحات</th><th class="act">عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" hidden>موردی برای نمایش نیست.</div>
+  </section>
+
+  <footer class="noprint">نمونه‌کار گروه INFC.1405 · اگر داده‌ها مهم‌اند، گاهی «پشتیبان‌گیری» بزنید.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var KEY='infc.duealert.v1';
+var FA='۰۱۲۳۴۵۶۷۸۹';
+function $(id){return document.getElementById(id)}
+function toFa(s){return String(s).replace(/\d/g,function(d){return FA[+d]})}
+function toEn(s){
+  return String(s).replace(/[۰-۹]/g,function(c){return FA.indexOf(c)})
+    .replace(/[٠-٩]/g,function(c){return '٠١٢٣٤٥٦٧٨٩'.indexOf(c)});
+}
+function pad(n){return (n<10?'0':'')+n}
+function money(n){return toFa(Math.round(n).toLocaleString('en-US'))}
+
+/* ---------- Shamsi (Jalali) helpers, based on Intl ---------- */
+var PF=new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn',{timeZone:'UTC',year:'numeric',month:'numeric',day:'numeric'});
+function isoToDate(iso){var a=iso.split('-');return new Date(Date.UTC(+a[0],+a[1]-1,+a[2],12))}
+function dateToIso(dt){return dt.toISOString().slice(0,10)}
+function jparts(dt){
+  var o={};
+  PF.formatToParts(dt).forEach(function(p){
+    if(p.type==='year'||p.type==='month'||p.type==='day')o[p.type]=parseInt(p.value,10);
+  });
+  return o;
+}
+function jStr(iso){var j=jparts(isoToDate(iso));return toFa(j.year+'/'+pad(j.month)+'/'+pad(j.day))}
+function fromJ(y,m,d){
+  var base=Date.UTC(y+621,2,21,12);
+  var offset=m<=6?(m-1)*31:186+(m-7)*30;
+  var t=base+(offset+d-1)*864e5;
+  var adj=[0,-1,1,-2,2,-3,3];
+  for(var i=0;i<adj.length;i++){
+    var dt=new Date(t+adj[i]*864e5);
+    var j=jparts(dt);
+    if(j.year===y&&j.month===m&&j.day===d)return dateToIso(dt);
+  }
+  return null;
+}
+function parseJ(str){
+  var s=toEn(str).trim();
+  var m=s.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+  if(!m)return null;
+  var y=+m[1],mo=+m[2],d=+m[3];
+  if(mo<1||mo>12||d<1||d>31)return null;
+  return fromJ(y,mo,d); // null if the day does not exist (round-trip check inside)
+}
+function todayIso(){
+  return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tehran'}).format(new Date());
+}
+function addDays(iso,n){return dateToIso(new Date(isoToDate(iso).getTime()+n*864e5))}
+function diffDays(aIso,bIso){return Math.round((isoToDate(aIso)-isoToDate(bIso))/864e5)}
+
+/* ---------- storage ---------- */
+function load(){
+  try{var v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}
+}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){alert('ذخیره‌سازی در این مرورگر ممکن نیست.')}
+}
+var items=load();
+var type='check';
+var filter='pending';
+
+/* ---------- form ---------- */
+function setType(t){
+  type=t;
+  $('typeCheck').setAttribute('aria-pressed',t==='check');
+  $('typeMisc').setAttribute('aria-pressed',t==='misc');
+  $('dueCheckBox').hidden=t!=='check';
+  $('dueMiscBox').hidden=t!=='misc';
+  updatePreview();
+}
+$('typeCheck').onclick=function(){setType('check')};
+$('typeMisc').onclick=function(){setType('misc')};
+
+function setToday(){$('tdate').value=jStr(todayIso());updatePreview()}
+$('btnToday').onclick=setToday;
+
+function updatePreview(){
+  var amt=parseInt(toEn($('amount').value).replace(/[^\d]/g,''),10);
+  $('amountPreview').textContent=amt?(money(amt)+' ریال'):'';
+  if(type==='misc'){
+    var t=parseJ($('tdate').value),n=parseInt(toEn($('dueDays').value),10);
+    $('duePreview').textContent=(t&&n>=0)?('سررسید: '+jStr(addDays(t,n))):'';
+  }
+}
+['tdate','amount','dueDays'].forEach(function(id){$(id).addEventListener('input',updatePreview)});
+$('btnReset').addEventListener('click',function(){setTimeout(function(){setType('check');setToday();$('formErr').textContent=''},0)});
+
+$('form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var err=$('formErr');err.textContent='';
+  var tdate=parseJ($('tdate').value);
+  if(!tdate){err.textContent='تاریخ معامله معتبر نیست (نمونه: ۱۴۰۵/۰۷/۱۶).';return}
+  var due,days=null;
+  if(type==='check'){
+    due=parseJ($('dueDate').value);
+    if(!due){err.textContent='تاریخ سررسید چک معتبر نیست (نمونه: ۱۴۰۵/۰۸/۱۶).';return}
+  }else{
+    days=parseInt(toEn($('dueDays').value),10);
+    if(isNaN(days)||days<0){err.textContent='تعداد روز تا سررسید را وارد کنید.';return}
+    due=addDays(tdate,days);
+  }
+  var amount=parseInt(toEn($('amount').value).replace(/[^\d]/g,''),10);
+  if(!amount||amount<=0){err.textContent='مبلغ را به ریال وارد کنید.';return}
+  items.push({
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    type:type,tdate:tdate,due:due,days:days,amount:amount,
+    invoice:$('invoice').value.trim(),desc:$('desc').value.trim(),paid:false
+  });
+  save();
+  $('form').reset();
+  setTimeout(function(){setType(type);setToday();render()},0);
+});
+
+/* ---------- render ---------- */
+function status(it,today){
+  var d=diffDays(it.due,today);
+  if(it.paid)return {cls:'ok',txt:'تسویه شد'};
+  if(d<0)return {cls:'over',txt:toFa(-d)+' روز گذشته'};
+  if(d===0)return {cls:'over',txt:'امروز'};
+  if(d<=3)return {cls:'soon',txt:toFa(d)+' روز مانده'};
+  return {cls:'',txt:toFa(d)+' روز مانده'};
+}
+function cell(tr,text,cls){var td=document.createElement('td');td.textContent=text;if(cls)td.className=cls;tr.appendChild(td);return td}
+
+function render(){
+  var today=todayIso();
+  var pend=items.filter(function(x){return !x.paid});
+  var total=pend.reduce(function(s,x){return s+x.amount},0);
+  var over=pend.filter(function(x){return diffDays(x.due,today)<0});
+  var soon=pend.filter(function(x){var d=diffDays(x.due,today);return d>=0&&d<=7});
+  $('sTotal').textContent=money(total);
+  $('sOver').textContent=toFa(over.length);
+  $('sSoon').textContent=toFa(soon.length);
+
+  var box=$('alertBox');
+  var near=pend.filter(function(x){var d=diffDays(x.due,today);return d>=0&&d<=3});
+  if(over.length||near.length){
+    var parts=[];
+    if(over.length)parts.push(toFa(over.length)+' مورد سررسیدگذشته');
+    if(near.length)parts.push(toFa(near.length)+' مورد تا ۳ روز آینده');
+    box.textContent='توجه: '+parts.join(' و ')+' دارید.';
+    box.className='alert'+(over.length?' bad':'');
+    box.hidden=false;
+  }else{box.hidden=true}
+
+  var list=items.filter(function(x){
+    return filter==='all'||(filter==='paid'?x.paid:!x.paid);
+  }).sort(function(a,b){return a.due<b.due?-1:a.due>b.due?1:0});
+
+  var tb=$('rows');tb.textContent='';
+  list.forEach(function(it,i){
+    var tr=document.createElement('tr');if(it.paid)tr.className='paid';
+    cell(tr,toFa(i+1));
+    cell(tr,jStr(it.tdate));
+    cell(tr,it.type==='check'?'چک':'متفرقه');
+    var tdDue=cell(tr,jStr(it.due));
+    var st=status(it,today);
+    var b=document.createElement('span');b.className='badge '+st.cls;b.textContent=st.txt;tdDue.appendChild(b);
+    cell(tr,money(it.amount),'amt');
+    cell(tr,it.invoice?toFa(it.invoice):'—');
+    cell(tr,it.desc||'—');
+    var ta=document.createElement('td');ta.className='act';
+    var b1=document.createElement('button');b1.type='button';b1.className='small';
+    b1.textContent=it.paid?'برگشت':'تسویه';
+    b1.onclick=function(){it.paid=!it.paid;save();render()};
+    var b2=document.createElement('button');b2.type='button';b2.className='small danger';b2.textContent='حذف';
+    b2.onclick=function(){
+      if(confirm('این مورد حذف شود؟')){items=items.filter(function(x){return x.id!==it.id});save();render()}
+    };
+    ta.appendChild(b1);ta.appendChild(b2);tr.appendChild(ta);
+    tb.appendChild(tr);
+  });
+  $('empty').hidden=list.length>0;
+  $('printDate').textContent='تاریخ گزارش: '+jStr(today);
+}
+
+document.querySelectorAll('.filters button').forEach(function(b){
+  b.addEventListener('click',function(){
+    filter=b.getAttribute('data-f');
+    document.querySelectorAll('.filters button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+    render();
+  });
+});
+
+/* ---------- print / backup ---------- */
+$('btnPrint').onclick=function(){window.print()};
+$('btnExport').onclick=function(){
+  var blob=new Blob([JSON.stringify({app:'INFC.DueAlert',v:1,items:items},null,1)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='duealert-backup-'+todayIso()+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href)},2000);
+};
+$('btnImport').onclick=function(){$('fileImport').click()};
+$('fileImport').addEventListener('change',function(){
+  var f=this.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var d=JSON.parse(r.result);
+      var arr=Array.isArray(d)?d:d.items;
+      if(!Array.isArray(arr))throw 0;
+      var ok=arr.filter(function(x){return x&&x.tdate&&x.due&&x.amount>0});
+      if(!confirm(toFa(ok.length)+' مورد پیدا شد. جایگزین فهرست فعلی شود؟'))return;
+      items=ok;save();render();
+    }catch(e){alert('فایل پشتیبان معتبر نیست.')}
+  };
+  r.readAsText(f);this.value='';
+});
+
+/* ---------- install + offline ---------- */
+var deferred=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();deferred=e;$('btnInstall').hidden=false;
+});
+$('btnInstall').onclick=function(){
+  if(!deferred)return;
+  deferred.prompt();deferred=null;$('btnInstall').hidden=true;
+};
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+}
+
+setType('check');setToday();render();
+})();
+</script>
+</body>
+</html>
