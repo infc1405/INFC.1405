@@ -6,7 +6,8 @@
 <title>کافه لونا | Luna Café</title>
 <meta name="description" content="کافه لونا؛ قهوه‌ی تازه‌برشته، شیرینی خانگی و فضایی آرام تا پاسی از شب. نمونه‌کار طراحی وب گروه INFC.1405.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{
   --espresso:#2B1912;
@@ -91,6 +92,7 @@ a{color:inherit}
 /* ---------- visit ---------- */
 .visit{padding:76px 0 56px}
 .visit .cols{display:grid;gap:36px;margin-top:26px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .hours{width:100%;max-width:420px;border-collapse:collapse}
 .hours td{padding:9px 0;border-bottom:1px solid rgba(245,233,218,.18)}
 .hours td:last-child{text-align:left;direction:ltr;color:var(--cream-dim)}
@@ -202,7 +204,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
     <h2>ساعت کاری و آدرس</h2>
     <div class="cols">
       <table class="hours">
-        <caption class="sr" style="position:absolute;left:-9999px">ساعت کاری</caption>
+        <caption class="sr">ساعت کاری</caption>
         <tr><td>شنبه تا پنجشنبه</td><td>۰۸:۰۰ – ۲۳:۰۰</td></tr>
         <tr><td>جمعه</td><td>۰۹:۰۰ – ۲۳:۰۰</td></tr>
       </table>
