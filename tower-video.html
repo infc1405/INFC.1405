@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نسخه ضبط ویدیو | برج چرخشی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#0F2742;
+  --ink:#0A1C30;
+  --line:#9FC2E0;
+  --paper:#EAF2FA;
+  --accent:#FF9F43;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  background:var(--blue);
+  color:var(--paper);
+  font-family:'Vazirmatn',Tahoma,sans-serif;
+  -webkit-text-size-adjust:100%;
+  cursor:none;
+  -webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.bg{
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 50% 55%,rgba(15,39,66,0) 0%,rgba(10,28,48,.85) 100%),
+    linear-gradient(var(--line) 1px,transparent 1px) 0 0/48px 48px,
+    linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/48px 48px,
+    var(--blue);
+  background-blend-mode:normal,soft-light,soft-light,normal;
+}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+
+.title{
+  position:fixed;left:0;right:0;
+  top:max(2.2rem,env(safe-area-inset-top));
+  text-align:center;padding:0 1.5rem;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity 1.1s ease,transform 1.1s ease;
+  pointer-events:none;
+}
+.title.on{opacity:1;transform:none}
+.title h1{
+  font-size:clamp(1.6rem,6.5vw,2.6rem);
+  font-weight:900;line-height:1.4;
+  display:inline-flex;align-items:center;gap:.7rem;
+}
+.title h1 i{
+  display:inline-block;width:16px;height:26px;background:var(--accent);
+  clip-path:polygon(0 100%,0 30%,50% 0,100% 30%,100% 100%);
+}
+.title p{
+  margin-top:.25rem;font-size:clamp(.9rem,3.4vw,1.15rem);
+  opacity:.8;
+}
+.nogl{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  text-align:center;padding:2rem;
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<div class="title" id="title">
+  <h1><i aria-hidden="true"></i>استودیو معماری نمونه</h1>
+  <p>وب‌سایت شرکتی با مدل سه‌بعدی تعاملی</p>
+</div>
+
+<div class="nogl" id="nogl">مرورگر شما از نمایش سه‌بعدی (WebGL) پشتیبانی نمی‌کند.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  var nogl = document.getElementById('nogl');
+  var titleEl = document.getElementById('title');
+
+  if (typeof THREE === 'undefined') { nogl.style.display = 'flex'; return; }
+
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  } catch (e) { nogl.style.display = 'flex'; return; }
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  document.body.appendChild(renderer.domElement);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
+
+  scene.add(new THREE.AmbientLight(0xbfd7ea, 0.75));
+  var sun = new THREE.DirectionalLight(0xffffff, 0.9);
+  sun.position.set(6, 12, 8);
+  scene.add(sun);
+  var warm = new THREE.PointLight(0xff9f43, 0.7, 40);
+  warm.position.set(-5, 6, 5);
+  scene.add(warm);
+
+  /* ground */
+  var grid = new THREE.GridHelper(24, 24, 0x9fc2e0, 0x9fc2e0);
+  grid.material.transparent = true;
+  grid.material.opacity = 0.22;
+  scene.add(grid);
+
+  var ring = new THREE.Mesh(
+    new THREE.RingGeometry(3.3, 3.36, 96),
+    new THREE.MeshBasicMaterial({ color: 0xff9f43, side: THREE.DoubleSide, transparent: true, opacity: 0.8 })
+  );
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.01;
+  scene.add(ring);
+
+  /* tower: built once, animated per frame */
+  var N = 14;
+  var FLOOR_H = 0.5;
+  var tower = new THREE.Group();
+  scene.add(tower);
+
+  var glassMat = new THREE.MeshStandardMaterial({
+    color: 0x2d6aa3, roughness: 0.25, metalness: 0.4,
+    transparent: true, opacity: 0.6
+  });
+  var slabMat = new THREE.MeshStandardMaterial({ color: 0xdfe9f3, roughness: 0.8 });
+  var topMat = new THREE.MeshStandardMaterial({ color: 0xff9f43, roughness: 0.6 });
+  var edgeMat = new THREE.LineBasicMaterial({ color: 0xbfd7ea, transparent: true, opacity: 0.55 });
+
+  var floors = [];
+  for (var i = 0; i < N; i++) {
+    var w = 2.7 - i * (1.1 / 24);
+    var floor = new THREE.Group();
+
+    var glassGeo = new THREE.BoxGeometry(w, FLOOR_H - 0.1, w);
+    var slabGeo = new THREE.BoxGeometry(w + 0.14, 0.1, w + 0.14);
+
+    var glass = new THREE.Mesh(glassGeo, glassMat);
+    glass.position.y = 0.1 + (FLOOR_H - 0.1) / 2;
+    var slab = new THREE.Mesh(slabGeo, i === N - 1 ? topMat : slabMat);
+    slab.position.y = 0.05;
+    floor.add(glass, slab);
+
+    var edges = new THREE.LineSegments(new THREE.EdgesGeometry(glassGeo), edgeMat);
+    edges.position.copy(glass.position);
+    floor.add(edges);
+
+    floor.position.y = i * FLOOR_H;
+    floor.visible = false;
+    tower.add(floor);
+    floors.push(floor);
+  }
+
+  var cap = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.5), topMat);
+  cap.visible = false;
+  tower.add(cap);
+
+  /* timeline (seconds) */
+  var T_GROW = 7;      /* floors rise one after another */
+  var T_HOLD_END = 25; /* twist and rotate */
+  var T_END = 31;      /* floors lower, then loop */
+
+  function ease(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+
+  var t0 = performance.now();
+  function restart() {
+    t0 = performance.now();
+    titleEl.classList.remove('on');
+    setTimeout(function () { titleEl.classList.add('on'); }, 600);
+  }
+  restart();
+  /* tap anywhere to restart the timeline */
+  window.addEventListener('pointerdown', restart);
+
+  function resize() {
+    var w = window.innerWidth, h = window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var rotY = 0.6;
+  var last = performance.now();
+
+  function loop(now) {
+    requestAnimationFrame(loop);
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    var t = ((now - t0) / 1000) % T_END;
+
+    /* how many floors are standing (0..N) */
+    var c;
+    if (t < T_GROW) c = N * ease(t / T_GROW);
+    else if (t < T_HOLD_END) c = N;
+    else c = N * (1 - ease((t - T_HOLD_END) / (T_END - T_HOLD_END)));
+
+    for (var i = 0; i < N; i++) {
+      var s = Math.max(0, Math.min(1, c - i));
+      floors[i].visible = s > 0.001;
+      floors[i].scale.y = Math.max(s, 0.001);
+    }
+    cap.visible = c > 0.05;
+    cap.position.y = c * FLOOR_H + 0.3;
+    cap.scale.setScalar(ease((c - (N - 1)) ));
+
+    /* twist rises smoothly, then breathes gently */
+    var twist = 0;
+    if (t > 5) {
+      twist = 0.16 * ease((t - 5) / 7);
+      if (t > 12) twist += 0.03 * Math.sin((t - 12) * 0.5);
+    }
+    if (t > T_HOLD_END) twist *= 1 - ease((t - T_HOLD_END) / (T_END - T_HOLD_END));
+    for (var j = 0; j < N; j++) floors[j].rotation.y = j * twist;
+
+    /* constant, smooth rotation (a little faster while the twist opens up) */
+    rotY += dt * (0.38 + 0.12 * ease((t - 5) / 7));
+    tower.rotation.y = rotY;
+    ring.rotation.z = -rotY * 0.5;
+
+    /* camera follows the tower height */
+    var H = Math.max(c * FLOOR_H, 2.5);
+    var d = H * 1.5 + 7 + Math.sin(now / 4000) * 0.4;
+    var portrait = camera.aspect < 0.8;
+    if (portrait) d *= 1.25;
+    camera.position.set(0, H * 0.5 + d * 0.18, d);
+    camera.lookAt(0, H * 0.5 - 0.4, 0);
+
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
