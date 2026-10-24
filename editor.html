@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1f3a5f">
-<title>ویرایشگر متن</title>
+<title data-fa="ویرایشگر متن" data-en="Text Editor">ویرایشگر متن</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -47,31 +47,32 @@ main{flex:1;overflow:auto;padding:12px 0 40px}
 <body>
 <header>
   <div class="row" aria-label="تنظیمات صفحه">
+    <button id="langBtn" type="button">English</button>
     <select id="paperSize" aria-label="اندازه کاغذ">
-      <option value="A4">کاغذ A4</option>
-      <option value="A5">کاغذ A5</option>
+      <option value="A4" data-fa="کاغذ A4" data-en="Paper A4">کاغذ A4</option>
+      <option value="A5" data-fa="کاغذ A5" data-en="Paper A5">کاغذ A5</option>
     </select>
     <select id="orient" aria-label="جهت برگه">
-      <option value="portrait">عمودی</option>
-      <option value="landscape">افقی</option>
+      <option value="portrait" data-fa="عمودی" data-en="Portrait">عمودی</option>
+      <option value="landscape" data-fa="افقی" data-en="Landscape">افقی</option>
     </select>
     <select id="lineSp" aria-label="فاصله سطرها">
-      <option value="1">فاصله سطر ۱</option>
-      <option value="1.15">۱٫۱۵</option>
-      <option value="1.5" selected>۱٫۵</option>
-      <option value="2">۲</option>
-      <option value="2.5">۲٫۵</option>
-      <option value="3">۳</option>
+      <option value="1" data-fa="فاصله سطر ۱" data-en="Line spacing 1">فاصله سطر ۱</option>
+      <option value="1.15" data-fa="۱٫۱۵" data-en="1.15">۱٫۱۵</option>
+      <option value="1.5" selected data-fa="۱٫۵" data-en="1.5">۱٫۵</option>
+      <option value="2" data-fa="۲" data-en="2">۲</option>
+      <option value="2.5" data-fa="۲٫۵" data-en="2.5">۲٫۵</option>
+      <option value="3" data-fa="۳" data-en="3">۳</option>
     </select>
     <button id="dirBtn" title="جهت متن">RTL ⇄ LTR</button>
-    <button id="printBtn">چاپ / PDF</button>
-    <button id="clearBtn">جدید</button>
+    <button id="printBtn" data-fa="چاپ / PDF" data-en="Print / PDF">چاپ / PDF</button>
+    <button id="clearBtn" data-fa="جدید" data-en="New">جدید</button>
   </div>
   <div class="row" aria-label="قالب‌بندی متن">
     <select id="fontName" aria-label="فونت">
-      <option value="Vazirmatn">وزیرمتن</option>
+      <option value="Vazirmatn" data-fa="وزیرمتن" data-en="Vazirmatn">وزیرمتن</option>
       <option value="Tahoma">Tahoma</option>
-      <option value="Noto Naskh Arabic">نسخ</option>
+      <option value="Noto Naskh Arabic" data-fa="نسخ" data-en="Naskh">نسخ</option>
       <option value="Times New Roman">Times New Roman</option>
       <option value="Arial">Arial</option>
       <option value="Georgia">Georgia</option>
@@ -287,16 +288,43 @@ main{flex:1;overflow:auto;padding:12px 0 40px}
     const [w,h] = PAPERS[$('#paperSize').value];
     const land = $('#orient').value==='landscape';
     const pages = Math.max(1, Math.ceil(paper.scrollHeight / ((land?w:h)*PX)));
-    $('#status').textContent = `${$('#paperSize').value} · ${land?'افقی':'عمودی'} · ${words.toLocaleString('fa')} کلمه · حدود ${pages.toLocaleString('fa')} صفحه`;
+    const en = lang==='en', loc = en?'en':'fa';
+    $('#status').textContent = en
+      ? `${$('#paperSize').value} · ${land?'Landscape':'Portrait'} · ${words.toLocaleString(loc)} words · about ${pages.toLocaleString(loc)} page(s)`
+      : `${$('#paperSize').value} · ${land?'افقی':'عمودی'} · ${words.toLocaleString(loc)} کلمه · حدود ${pages.toLocaleString(loc)} صفحه`;
   }
   paper.addEventListener('input', ()=>{ ensureBlocks(); save(); });
   $('#printBtn').onclick = ()=>window.print();
   $('#clearBtn').onclick = ()=>{
-    if (!confirm('سند فعلی پاک شود و سند جدید شروع شود؟')) return;
+    if (!confirm(lang==='en' ? 'Clear the current document and start a new one?' : 'سند فعلی پاک شود و سند جدید شروع شود؟')) return;
     paper.innerHTML='<p><br></p>'; paper.removeAttribute('style'); saved=null; save(); paper.focus();
   };
 
-  load(); applyPage();
+  /* ---------- interface language (fa / en) ---------- */
+  let lang = 'fa';
+  try{ lang = localStorage.getItem('persian-word-lang') || 'fa'; }catch(_){}
+  function setLang(l, fromUser){
+    lang = l;
+    const en = l==='en';
+    document.documentElement.lang = l;
+    document.documentElement.dir = en ? 'ltr' : 'rtl';
+    document.querySelectorAll('[data-fa]').forEach(el=>{
+      el.textContent = en ? el.dataset.en : el.dataset.fa;
+    });
+    document.title = en ? 'Text Editor' : 'ویرایشگر متن';
+    $('#langBtn').textContent = en ? 'فارسی' : 'English';
+    // an empty document follows the interface language
+    if (fromUser && !paper.innerText.trim()){
+      paper.style.direction = en ? 'ltr' : 'rtl';
+      paper.style.textAlign = en ? 'left' : 'right';
+      [...paper.children].forEach(b=>{b.style.direction='';b.style.textAlign='';});
+    }
+    try{ localStorage.setItem('persian-word-lang', l); }catch(_){}
+    status();
+  }
+  $('#langBtn').onclick = ()=>{ setLang(lang==='en'?'fa':'en', true); save(); };
+
+  load(); applyPage(); setLang(lang, false);
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     // optional: add sw.js later for offline use
   }
