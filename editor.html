@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f3a5f">
+<title>ویرایشگر متن</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bar:#1f3a5f; --bar-2:#2b4c7a; --ink:#1b1f24; --desk:#d9dde3; --paper:#fff;
+  --accent:#f2b84b; --line:#c3cad4;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --desk:#23272d; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--desk);color:var(--ink);display:flex;flex-direction:column}
+header{background:var(--bar);color:#fff;padding:6px 8px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;z-index:5}
+.row{display:flex;gap:6px;overflow-x:auto;align-items:center;scrollbar-width:none;padding-bottom:1px}
+.row::-webkit-scrollbar{display:none}
+.row>*{flex:0 0 auto}
+button,select{font-family:inherit;font-size:14px;height:38px;border-radius:8px;border:1px solid var(--bar-2);background:var(--bar-2);color:#fff;padding:0 10px;min-width:38px}
+button:active{background:#3a5f94}
+button[aria-pressed="true"],button.on{background:var(--accent);color:#1b1f24;border-color:var(--accent)}
+select{padding:0 6px;max-width:150px}
+select option{color:#000}
+button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sep{width:1px;height:24px;background:#ffffff40}
+svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;display:block;margin:auto}
+main{flex:1;overflow:auto;padding:12px 0 40px}
+#sheetBox{margin:0 auto;width:max-content}
+#paper{background:var(--paper);color:#111;box-shadow:0 2px 10px rgba(0,0,0,.25);outline:none;
+  padding:20mm;overflow-wrap:anywhere;font-family:Vazirmatn,Tahoma,sans-serif;font-size:14pt;line-height:1.5;direction:rtl;text-align:right}
+#paper p{margin:0}
+.status{font-size:12px;opacity:.85;padding:0 4px}
+@media print{
+  header,.status{display:none}
+  body,main{background:#fff;padding:0;overflow:visible;display:block}
+  #sheetBox{zoom:1 !important}
+  #paper{box-shadow:none}
+}
+</style>
+<style id="pageStyle"></style>
+</head>
+<body>
+<header>
+  <div class="row" aria-label="تنظیمات صفحه">
+    <select id="paperSize" aria-label="اندازه کاغذ">
+      <option value="A4">کاغذ A4</option>
+      <option value="A5">کاغذ A5</option>
+    </select>
+    <select id="orient" aria-label="جهت برگه">
+      <option value="portrait">عمودی</option>
+      <option value="landscape">افقی</option>
+    </select>
+    <select id="lineSp" aria-label="فاصله سطرها">
+      <option value="1">فاصله سطر ۱</option>
+      <option value="1.15">۱٫۱۵</option>
+      <option value="1.5" selected>۱٫۵</option>
+      <option value="2">۲</option>
+      <option value="2.5">۲٫۵</option>
+      <option value="3">۳</option>
+    </select>
+    <button id="dirBtn" title="جهت متن">RTL ⇄ LTR</button>
+    <button id="printBtn">چاپ / PDF</button>
+    <button id="clearBtn">جدید</button>
+  </div>
+  <div class="row" aria-label="قالب‌بندی متن">
+    <select id="fontName" aria-label="فونت">
+      <option value="Vazirmatn">وزیرمتن</option>
+      <option value="Tahoma">Tahoma</option>
+      <option value="Noto Naskh Arabic">نسخ</option>
+      <option value="Times New Roman">Times New Roman</option>
+      <option value="Arial">Arial</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Courier New">Courier New</option>
+    </select>
+    <button id="szDown" aria-label="کوچک‌تر">A−</button>
+    <select id="fontSize" aria-label="اندازه فونت"></select>
+    <button id="szUp" aria-label="بزرگ‌تر">A+</button>
+    <span class="sep"></span>
+    <button data-cmd="bold"><b>B</b></button>
+    <button data-cmd="italic"><i>I</i></button>
+    <button data-cmd="underline"><u>U</u></button>
+    <span class="sep"></span>
+    <button data-align="right" aria-label="راست‌چین"><svg viewBox="0 0 24 24"><path d="M3 6h18M9 12h12M5 18h16"/></svg></button>
+    <button data-align="center" aria-label="وسط‌چین"><svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M5 18h14"/></svg></button>
+    <button data-align="left" aria-label="چپ‌چین"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h16"/></svg></button>
+    <button data-align="justify" aria-label="توزیع"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <span class="sep"></span>
+    <button data-cmd="undo" aria-label="بازگردانی">↶</button>
+    <button data-cmd="redo" aria-label="تکرار">↷</button>
+  </div>
+  <div class="status" id="status"></div>
+</header>
+
+<main id="desk">
+  <div id="sheetBox">
+    <div id="paper" contenteditable="true" spellcheck="false"><p><br></p></div>
+  </div>
+</main>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const paper = $('#paper'), box = $('#sheetBox'), desk = $('#desk');
+  const PAPERS = { A4:[210,297], A5:[148,210] };
+  const PX = 96/25.4;
+  const sizes = [8,9,10,11,12,14,16,18,20,22,24,28,32,36,48,60,72];
+  const fs = $('#fontSize');
+  sizes.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;if(n===14)o.selected=true;fs.appendChild(o)});
+
+  document.execCommand('defaultParagraphSeparator', false, 'p');
+
+  /* ---------- selection keeper (selects/buttons steal focus on mobile) ---------- */
+  let saved = null;
+  document.addEventListener('selectionchange', ()=>{
+    const s = getSelection();
+    if (s.rangeCount && paper.contains(s.anchorNode)) saved = s.getRangeAt(0).cloneRange();
+    reflectState();
+  });
+  function restore(){
+    paper.focus({preventScroll:true});
+    if (saved){ const s=getSelection(); s.removeAllRanges(); s.addRange(saved); }
+  }
+  function hasSelection(){ return saved && !saved.collapsed; }
+
+  /* ---------- page: size, orientation, scale ---------- */
+  function applyPage(){
+    const [w,h] = PAPERS[$('#paperSize').value];
+    const land = $('#orient').value === 'landscape';
+    const W = land ? h : w, H = land ? w : h;
+    paper.style.width = W+'mm';
+    paper.style.minHeight = H+'mm';
+    $('#pageStyle').textContent = `@page{size:${$('#paperSize').value} ${land?'landscape':'portrait'};margin:0}`;
+    fit(W);
+    status();
+  }
+  function fit(Wmm){
+    const avail = desk.clientWidth - 16;
+    const z = Math.min(1, avail / (Wmm*PX));
+    box.style.zoom = z;
+    box.dataset.zoom = z;
+  }
+  window.addEventListener('resize', applyPage);
+  $('#paperSize').onchange = $('#orient').onchange = ()=>{applyPage();save()};
+
+  /* ---------- blocks (for line spacing / alignment) ---------- */
+  function blocksInRange(){
+    const all = [...paper.children];
+    if (!hasSelection()) return all;
+    return all.filter(b => saved.intersectsNode(b));
+  }
+  function ensureBlocks(){
+    if (!paper.children.length) paper.innerHTML = '<p><br></p>';
+  }
+
+  /* ---------- line spacing ---------- */
+  $('#lineSp').onchange = e=>{
+    ensureBlocks();
+    const v = e.target.value;
+    if (hasSelection()) blocksInRange().forEach(b=>b.style.lineHeight=v);
+    else { paper.style.lineHeight=v; [...paper.children].forEach(b=>b.style.lineHeight=v); }
+    save();
+  };
+
+  /* ---------- alignment ---------- */
+  document.querySelectorAll('[data-align]').forEach(btn=>{
+    btn.onmousedown = e=>e.preventDefault();
+    btn.onclick = ()=>{
+      restore(); ensureBlocks();
+      const a = btn.dataset.align;
+      const targets = blocksInRange();
+      if (saved && saved.collapsed){
+        // only the paragraph with the cursor
+        let n = saved.startContainer; while(n && n.parentNode!==paper) n=n.parentNode;
+        if (n && n.nodeType===1) n.style.textAlign=a;
+      } else targets.forEach(b=>b.style.textAlign=a);
+      save(); reflectState();
+    };
+  });
+
+  /* ---------- text direction ---------- */
+  $('#dirBtn').onclick = ()=>{
+    restore(); ensureBlocks();
+    const cur = paper.style.direction || 'rtl';
+    const next = cur==='rtl'?'ltr':'rtl';
+    const apply = b=>{b.style.direction=next; b.style.textAlign = next==='rtl'?'right':'left';};
+    if (hasSelection()) blocksInRange().forEach(apply);
+    else { paper.style.direction=next; [...paper.children].forEach(apply); }
+    save();
+  };
+
+  /* ---------- font family ---------- */
+  $('#fontName').onchange = e=>{
+    restore();
+    if (hasSelection()) document.execCommand('fontName', false, e.target.value);
+    else paper.style.fontFamily = `"${e.target.value}", Tahoma, sans-serif`;
+    save();
+  };
+
+  /* ---------- font size (pt) ---------- */
+  function setSize(pt){
+    restore();
+    if (!hasSelection()){
+      paper.style.fontSize = pt+'pt';
+      paper.querySelectorAll('span[style*="font-size"]').forEach(s=>s.style.fontSize='');
+    } else {
+      document.execCommand('fontSize', false, '7');
+      paper.querySelectorAll('font[size="7"]').forEach(f=>{
+        const s = document.createElement('span');
+        s.style.fontSize = pt+'pt';
+        while(f.firstChild) s.appendChild(f.firstChild);
+        f.replaceWith(s);
+      });
+    }
+    fs.value = pt; save();
+  }
+  fs.onchange = e=>setSize(+e.target.value);
+  function step(d){
+    const i = sizes.indexOf(+fs.value);
+    const n = sizes[Math.max(0, Math.min(sizes.length-1, (i<0?5:i)+d))];
+    setSize(n);
+  }
+  $('#szUp').onmousedown=$('#szDown').onmousedown=e=>e.preventDefault();
+  $('#szUp').onclick = ()=>step(1);
+  $('#szDown').onclick = ()=>step(-1);
+
+  /* ---------- bold / italic / underline / undo / redo ---------- */
+  document.querySelectorAll('[data-cmd]').forEach(btn=>{
+    btn.onmousedown = e=>e.preventDefault();
+    btn.onclick = ()=>{ restore(); document.execCommand(btn.dataset.cmd); save(); reflectState(); };
+  });
+
+  /* ---------- reflect state of toolbar ---------- */
+  function reflectState(){
+    ['bold','italic','underline'].forEach(c=>{
+      const b = document.querySelector(`[data-cmd="${c}"]`);
+      try{ b.setAttribute('aria-pressed', document.queryCommandState(c)); }catch(_){}
+    });
+    if (saved){
+      let n = saved.startContainer; if(n.nodeType===3) n=n.parentNode;
+      if (n && paper.contains(n)){
+        const cs = getComputedStyle(n);
+        const px = parseFloat(cs.fontSize);
+        const pt = Math.round(px*72/96);
+        if (sizes.includes(pt)) fs.value = pt;
+        let blk = n; while(blk && blk.parentNode!==paper) blk=blk.parentNode;
+        const al = blk ? getComputedStyle(blk).textAlign : 'right';
+        const map = {start:getComputedStyle(paper).direction==='rtl'?'right':'left', end:getComputedStyle(paper).direction==='rtl'?'left':'right'};
+        const cur = map[al] || al;
+        document.querySelectorAll('[data-align]').forEach(b=>b.classList.toggle('on', b.dataset.align===cur));
+      }
+    }
+  }
+
+  /* ---------- save / load / new / print ---------- */
+  const KEY = 'persian-word-doc-v1';
+  let t;
+  function save(){
+    clearTimeout(t);
+    t = setTimeout(()=>{
+      try{
+        localStorage.setItem(KEY, JSON.stringify({
+          html: paper.innerHTML, style: paper.getAttribute('style')||'',
+          size: $('#paperSize').value, orient: $('#orient').value, line: $('#lineSp').value
+        }));
+      }catch(_){}
+      status();
+    }, 400);
+  }
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem(KEY)||'null');
+      if (!d) return;
+      paper.innerHTML = d.html || '<p><br></p>';
+      paper.setAttribute('style', d.style||'');
+      $('#paperSize').value = d.size||'A4';
+      $('#orient').value = d.orient||'portrait';
+      $('#lineSp').value = d.line||'1.5';
+    }catch(_){}
+  }
+  function status(){
+    const words = paper.innerText.trim().split(/\s+/).filter(Boolean).length;
+    const [w,h] = PAPERS[$('#paperSize').value];
+    const land = $('#orient').value==='landscape';
+    const pages = Math.max(1, Math.ceil(paper.scrollHeight / ((land?w:h)*PX)));
+    $('#status').textContent = `${$('#paperSize').value} · ${land?'افقی':'عمودی'} · ${words.toLocaleString('fa')} کلمه · حدود ${pages.toLocaleString('fa')} صفحه`;
+  }
+  paper.addEventListener('input', ()=>{ ensureBlocks(); save(); });
+  $('#printBtn').onclick = ()=>window.print();
+  $('#clearBtn').onclick = ()=>{
+    if (!confirm('سند فعلی پاک شود و سند جدید شروع شود؟')) return;
+    paper.innerHTML='<p><br></p>'; paper.removeAttribute('style'); saved=null; save(); paper.focus();
+  };
+
+  load(); applyPage();
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    // optional: add sw.js later for offline use
+  }
+})();
+</script>
+</body>
+</html>
