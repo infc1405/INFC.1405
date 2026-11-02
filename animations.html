@@ -2,210 +2,171 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>انیمیشن‌ها | INFC.1405</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>انیمیشن‌ها | گروه فریلنسری INFC.1405</title>
+<link rel="icon" href="assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
 <style>
-  :root {
-    --bg: #03030a;
-    --card: #0b0c1c;
-    --line: #232650;
-    --ink: #e9ecff;
-    --muted: #8b90b8;
-    --accent: #b6ff3c;
+  /* فقط مخصوص کارت‌های انیمیشن */
+  .anim-card{ display:flex; flex-direction:column; padding:16px; }
+  .anim-card .thumb{
+    width:100%;
+    aspect-ratio:1 / 1;
+    display:block;
+    border-radius:12px;
+    background:rgba(4,12,28,.45);
+    margin-bottom:16px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
-    min-height: 100vh;
+  .anim-card p{ flex:1; }
+  .anim-card .run{
+    margin-top:16px;
+    display:block;
+    text-align:center;
+    padding:10px 0;
+    border-radius:10px;
+    background:var(--teal);
+    color:#04241f;
+    font-weight:700;
+    transition:.2s;
   }
-  .wrap {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 28px 18px 60px;
-  }
-  .top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  h1 {
-    font-size: clamp(1.6rem, 5vw, 2.3rem);
-    color: var(--accent);
-  }
-  .home {
-    color: var(--muted);
-    font-size: .9rem;
-    text-decoration: none;
-  }
-  .home:hover { color: var(--accent); }
-  .lead {
-    color: var(--muted);
-    font-size: .95rem;
-    margin-bottom: 28px;
-    line-height: 1.9;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 18px;
-  }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .thumb {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    display: block;
-    background: #000;
-  }
-  .thumb.empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #3a3f78;
-    font-size: 2.4rem;
-  }
-  .body {
-    padding: 14px 16px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-  }
-  .body h2 { font-size: 1.1rem; }
-  .body p {
-    font-size: .85rem;
-    color: var(--muted);
-    line-height: 1.8;
-    flex: 1;
-  }
-  .run {
-    margin-top: 8px;
-    display: block;
-    text-align: center;
-    padding: 9px 0;
-    border-radius: 9px;
-    background: var(--accent);
-    color: #0a0f00;
-    font-weight: 700;
-    font-size: .95rem;
-    text-decoration: none;
-  }
-  .run:hover { filter: brightness(1.08); }
-  .run:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-  .run.off {
-    background: transparent;
-    border: 1px dashed var(--line);
-    color: var(--muted);
-    cursor: default;
-    pointer-events: none;
-  }
+  .anim-card .run:hover{ opacity:.9; }
+  .anim-card .run:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
 </style>
 </head>
 <body>
-  <main class="wrap">
-    <div class="top">
-      <h1>انیمیشن‌ها</h1>
-      <a class="home" href="index.html">بازگشت به صفحه‌ی اصلی ←</a>
-    </div>
-    <p class="lead">روی دکمه‌ی «اجرا» بزن تا انیمیشن در صفحه‌ی خودش باز بشه.</p>
 
-    <div class="grid" id="grid"></div>
-  </main>
+<header class="site-header">
+  <div class="container brand-row">
+    <div class="brand-name-block">
+      <h1 class="brand-name" data-fa="گروه فریلنسری INFC.1405" data-en="INFC.1405 Freelance Group">گروه فریلنسری INFC.1405</h1>
+      <p class="brand-tagline" data-fa="از سال ۲۰۲۶" data-en="Since 2026">از سال ۲۰۲۶</p>
+    </div>
+    <div class="brand-logo-block">
+      <img src="assets/logo.jpg" alt="INFC.1405 logo">
+      <div class="clock-date">
+        <div class="clock">--:--:--</div>
+        <div class="date">-</div>
+      </div>
+    </div>
+  </div>
+
+  <svg class="circuit-divider" viewBox="0 0 1100 14" preserveAspectRatio="none">
+    <path d="M0,7 H1100"></path>
+    <circle cx="220" cy="7" r="3"></circle>
+    <circle cx="640" cy="7" r="3"></circle>
+    <circle cx="900" cy="7" r="3"></circle>
+  </svg>
+
+  <div class="container">
+    <nav class="main-nav">
+      <ul class="nav-links">
+        <li><a href="index.html" data-fa="خانه" data-en="Home">خانه</a></li>
+        <li><a href="services.html" data-fa="خدمات" data-en="Services">خدمات</a></li>
+        <li><a href="about.html" data-fa="درباره ما" data-en="About Us">درباره ما</a></li>
+        <li><a href="contact.html" data-fa="ارتباط با ما" data-en="Contact Us">ارتباط با ما</a></li>
+        <li><a href="gallery.html" data-fa="نمونه‌کار" data-en="Portfolio">نمونه‌کار</a></li>
+        <li><a href="animations.html" class="active" data-fa="انیمیشن‌ها" data-en="Animations">انیمیشن‌ها</a></li>
+      </ul>
+      <button class="lang-toggle" type="button">
+        <span class="lang-toggle-label">English</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <p class="eyebrow" data-fa="انیمیشن‌ها" data-en="Animations">انیمیشن‌ها</p>
+  <h1 class="page-title" data-fa="انیمیشن‌های ریاضی با کد" data-en="Math animations in code">انیمیشن‌های ریاضی با کد</h1>
+  <p class="lead" data-fa="روی دکمه‌ی «اجرا» بزن تا انیمیشن در صفحه‌ی خودش باز بشه."
+     data-en="Press Run to open the animation on its own page.">
+     روی دکمه‌ی «اجرا» بزن تا انیمیشن در صفحه‌ی خودش باز بشه.
+  </p>
+
+  <section class="section">
+    <div class="grid">
+
+      <!-- برای کارت جدید، یک بلوک article کامل را کپی کن و عنوان، توضیح و لینک را عوض کن -->
+      <article class="card anim-card">
+        <canvas class="thumb" data-shape="butterfly" role="img" aria-label="Butterfly"></canvas>
+        <h3 data-fa="پروانه" data-en="Butterfly">پروانه</h3>
+        <p data-fa="منحنی پروانه با نقطه‌ها و مسیرهای نئونی که کم‌کم کشیده می‌شود."
+           data-en="A butterfly curve drawn step by step with neon dots and trails.">منحنی پروانه با نقطه‌ها و مسیرهای نئونی که کم‌کم کشیده می‌شود.</p>
+        <a class="run" href="animations/butterfly.html" data-fa="اجرا" data-en="Run">اجرا</a>
+      </article>
+
+      <article class="card anim-card">
+        <canvas class="thumb" data-shape="rose" role="img" aria-label="Rose"></canvas>
+        <h3 data-fa="گل" data-en="Rose">گل</h3>
+        <p data-fa="منحنی گل با گلبرگ‌های رنگی که روی هم می‌افتند."
+           data-en="A rose curve with colorful petals layering over each other.">منحنی گل با گلبرگ‌های رنگی که روی هم می‌افتند.</p>
+        <a class="run" href="animations/rose.html" data-fa="اجرا" data-en="Run">اجرا</a>
+      </article>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <svg class="circuit-divider container" viewBox="0 0 1100 14" preserveAspectRatio="none">
+    <path d="M0,7 H1100"></path>
+    <circle cx="350" cy="7" r="3"></circle>
+    <circle cx="760" cy="7" r="3"></circle>
+  </svg>
+  <p class="footer-credit" data-fa="طراحی توسط گروه مهندسین INFC.1405" data-en="Designed by INFC.1405 Engineering Team">
+    طراحی توسط <strong>گروه مهندسین INFC.1405</strong>
+  </p>
+  <p class="visit-counter">
+    <span data-fa="تعداد بازدید:" data-en="Visits:">تعداد بازدید:</span>
+    <span class="count">0</span>
+  </p>
+</footer>
 
 <script>
-/* برای اضافه کردن انیمیشن جدید، یک مورد به این آرایه اضافه کن:
-   title: نام کارت، desc: توضیح کوتاه، href: آدرس صفحه‌ی انیمیشن،
-   shape: نام شکل برای پیش‌نمایش (butterfly یا rose)، برای کارت بدون پیش‌نمایش حذفش کن.
-   اگر href نداشته باشه، دکمه «به‌زودی» نشون داده می‌شه. */
-const ANIMATIONS = [
-  { title: 'پروانه',  desc: 'منحنی پروانه با نقطه‌ها و مسیرهای نئونی که کم‌کم کشیده می‌شه.', href: 'animations/butterfly.html', shape: 'butterfly' },
-  { title: 'گل',      desc: 'منحنی گل با گلبرگ‌های رنگی که روی هم می‌افتن.',                   href: 'animations/rose.html',      shape: 'rose' },
-  { title: 'به‌زودی', desc: 'انیمیشن بعدی در راه است.' }
-];
+/* پیش‌نمایش نئونی کارت‌ها */
+(function () {
+  var N = 700;
+  var SHAPES = {
+    butterfly: { scale: 0.088, pt: function (a) {
+      var r = Math.exp(Math.cos(a)) - 2 * Math.cos(4 * a) - Math.pow(Math.sin(a / 12), 5);
+      return [r * Math.sin(a), r * Math.cos(a)];
+    }},
+    rose: { scale: 0.42, pt: function (a) {
+      var r = Math.cos((7 * a) / 3);
+      return [r * Math.cos(a), r * Math.sin(a)];
+    }}
+  };
 
-const N = 700;
-const SHAPES = {
-  butterfly: { scale: 0.088, pt: (a) => {
-    const r = Math.exp(Math.cos(a)) - 2 * Math.cos(4 * a) - Math.pow(Math.sin(a / 12), 5);
-    return [r * Math.sin(a), r * Math.cos(a)];
-  }},
-  rose: { scale: 0.42, pt: (a) => {
-    const r = Math.cos((7 * a) / 3);
-    return [r * Math.cos(a), r * Math.sin(a)];
-  }}
-};
-
-function drawThumb(canvas, shape) {
-  const size = 360;
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  const s = SHAPES[shape];
-  const S = size * s.scale;
-  const c = size / 2;
-  for (let i = 1; i <= N; i++) {
-    const a = (i / N) * 12 * Math.PI;
-    const [x, y] = s.pt(a);
-    const h = (i / N) * 360;
-    ctx.strokeStyle = `hsla(${h},100%,60%,0.07)`;
-    ctx.beginPath();
-    ctx.moveTo(c, c);
-    ctx.lineTo(c + S * x, c - S * y);
-    ctx.stroke();
-    ctx.shadowColor = `hsl(${h},100%,60%)`;
-    ctx.shadowBlur = 6;
-    ctx.fillStyle = `hsl(${h},100%,62%)`;
-    ctx.beginPath();
-    ctx.arc(c + S * x, c - S * y, 1.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  }
-}
-
-const grid = document.getElementById('grid');
-ANIMATIONS.forEach((item) => {
-  const card = document.createElement('article');
-  card.className = 'card';
-
-  let thumb;
-  if (item.shape) {
-    thumb = document.createElement('canvas');
-    thumb.className = 'thumb';
-    thumb.setAttribute('role', 'img');
-    thumb.setAttribute('aria-label', 'پیش‌نمایش ' + item.title);
-    drawThumb(thumb, item.shape);
-  } else {
-    thumb = document.createElement('div');
-    thumb.className = 'thumb empty';
-    thumb.textContent = '؟';
-  }
-
-  const body = document.createElement('div');
-  body.className = 'body';
-  const h = document.createElement('h2');
-  h.textContent = item.title;
-  const p = document.createElement('p');
-  p.textContent = item.desc;
-  const a = document.createElement('a');
-  a.className = 'run' + (item.href ? '' : ' off');
-  a.textContent = item.href ? 'اجرا' : 'به‌زودی';
-  if (item.href) a.href = item.href;
-
-  body.append(h, p, a);
-  card.append(thumb, body);
-  grid.appendChild(card);
-});
+  document.querySelectorAll('canvas.thumb[data-shape]').forEach(function (canvas) {
+    var s = SHAPES[canvas.getAttribute('data-shape')];
+    if (!s) return;
+    var size = 360;
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    var S = size * s.scale;
+    var c = size / 2;
+    for (var i = 1; i <= N; i++) {
+      var a = (i / N) * 12 * Math.PI;
+      var p = s.pt(a);
+      var h = (i / N) * 360;
+      ctx.strokeStyle = 'hsla(' + h + ',100%,60%,0.07)';
+      ctx.beginPath();
+      ctx.moveTo(c, c);
+      ctx.lineTo(c + S * p[0], c - S * p[1]);
+      ctx.stroke();
+      ctx.shadowColor = 'hsl(' + h + ',100%,60%)';
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = 'hsl(' + h + ',100%,62%)';
+      ctx.beginPath();
+      ctx.arc(c + S * p[0], c - S * p[1], 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  });
+})();
 </script>
+<script src="js/main.js"></script>
 </body>
 </html>
