@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>انیمیشن‌ها | INFC.1405</title>
+<style>
+  :root {
+    --bg: #03030a;
+    --card: #0b0c1c;
+    --line: #232650;
+    --ink: #e9ecff;
+    --muted: #8b90b8;
+    --accent: #b6ff3c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  .top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: clamp(1.6rem, 5vw, 2.3rem);
+    color: var(--accent);
+  }
+  .home {
+    color: var(--muted);
+    font-size: .9rem;
+    text-decoration: none;
+  }
+  .home:hover { color: var(--accent); }
+  .lead {
+    color: var(--muted);
+    font-size: .95rem;
+    margin-bottom: 28px;
+    line-height: 1.9;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .thumb {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: block;
+    background: #000;
+  }
+  .thumb.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3a3f78;
+    font-size: 2.4rem;
+  }
+  .body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .body h2 { font-size: 1.1rem; }
+  .body p {
+    font-size: .85rem;
+    color: var(--muted);
+    line-height: 1.8;
+    flex: 1;
+  }
+  .run {
+    margin-top: 8px;
+    display: block;
+    text-align: center;
+    padding: 9px 0;
+    border-radius: 9px;
+    background: var(--accent);
+    color: #0a0f00;
+    font-weight: 700;
+    font-size: .95rem;
+    text-decoration: none;
+  }
+  .run:hover { filter: brightness(1.08); }
+  .run:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .run.off {
+    background: transparent;
+    border: 1px dashed var(--line);
+    color: var(--muted);
+    cursor: default;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top">
+      <h1>انیمیشن‌ها</h1>
+      <a class="home" href="index.html">بازگشت به صفحه‌ی اصلی ←</a>
+    </div>
+    <p class="lead">روی دکمه‌ی «اجرا» بزن تا انیمیشن در صفحه‌ی خودش باز بشه.</p>
+
+    <div class="grid" id="grid"></div>
+  </main>
+
+<script>
+/* برای اضافه کردن انیمیشن جدید، یک مورد به این آرایه اضافه کن:
+   title: نام کارت، desc: توضیح کوتاه، href: آدرس صفحه‌ی انیمیشن،
+   shape: نام شکل برای پیش‌نمایش (butterfly یا rose)، برای کارت بدون پیش‌نمایش حذفش کن.
+   اگر href نداشته باشه، دکمه «به‌زودی» نشون داده می‌شه. */
+const ANIMATIONS = [
+  { title: 'پروانه',  desc: 'منحنی پروانه با نقطه‌ها و مسیرهای نئونی که کم‌کم کشیده می‌شه.', href: 'animations/butterfly.html', shape: 'butterfly' },
+  { title: 'گل',      desc: 'منحنی گل با گلبرگ‌های رنگی که روی هم می‌افتن.',                   href: 'animations/rose.html',      shape: 'rose' },
+  { title: 'به‌زودی', desc: 'انیمیشن بعدی در راه است.' }
+];
+
+const N = 700;
+const SHAPES = {
+  butterfly: { scale: 0.088, pt: (a) => {
+    const r = Math.exp(Math.cos(a)) - 2 * Math.cos(4 * a) - Math.pow(Math.sin(a / 12), 5);
+    return [r * Math.sin(a), r * Math.cos(a)];
+  }},
+  rose: { scale: 0.42, pt: (a) => {
+    const r = Math.cos((7 * a) / 3);
+    return [r * Math.cos(a), r * Math.sin(a)];
+  }}
+};
+
+function drawThumb(canvas, shape) {
+  const size = 360;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const s = SHAPES[shape];
+  const S = size * s.scale;
+  const c = size / 2;
+  for (let i = 1; i <= N; i++) {
+    const a = (i / N) * 12 * Math.PI;
+    const [x, y] = s.pt(a);
+    const h = (i / N) * 360;
+    ctx.strokeStyle = `hsla(${h},100%,60%,0.07)`;
+    ctx.beginPath();
+    ctx.moveTo(c, c);
+    ctx.lineTo(c + S * x, c - S * y);
+    ctx.stroke();
+    ctx.shadowColor = `hsl(${h},100%,60%)`;
+    ctx.shadowBlur = 6;
+    ctx.fillStyle = `hsl(${h},100%,62%)`;
+    ctx.beginPath();
+    ctx.arc(c + S * x, c - S * y, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+const grid = document.getElementById('grid');
+ANIMATIONS.forEach((item) => {
+  const card = document.createElement('article');
+  card.className = 'card';
+
+  let thumb;
+  if (item.shape) {
+    thumb = document.createElement('canvas');
+    thumb.className = 'thumb';
+    thumb.setAttribute('role', 'img');
+    thumb.setAttribute('aria-label', 'پیش‌نمایش ' + item.title);
+    drawThumb(thumb, item.shape);
+  } else {
+    thumb = document.createElement('div');
+    thumb.className = 'thumb empty';
+    thumb.textContent = '؟';
+  }
+
+  const body = document.createElement('div');
+  body.className = 'body';
+  const h = document.createElement('h2');
+  h.textContent = item.title;
+  const p = document.createElement('p');
+  p.textContent = item.desc;
+  const a = document.createElement('a');
+  a.className = 'run' + (item.href ? '' : ' off');
+  a.textContent = item.href ? 'اجرا' : 'به‌زودی';
+  if (item.href) a.href = item.href;
+
+  body.append(h, p, a);
+  card.append(thumb, body);
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
