@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INFC.1405 | گل نئونی</title>
+<style>
+  :root {
+    --bg: #03030a;
+    --ink: #e9ecff;
+    --muted: #8b90b8;
+    --accent: #b6ff3c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  .back {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    color: var(--muted);
+    font-size: .9rem;
+    text-decoration: none;
+  }
+  .back:hover { color: var(--accent); }
+  .back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  header {
+    text-align: center;
+    padding: 18px 16px 4px;
+    z-index: 2;
+  }
+  header h1 {
+    font-size: clamp(1.5rem, 5vw, 2.4rem);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: .02em;
+  }
+  header p {
+    margin-top: 4px;
+    font-size: clamp(.8rem, 2.6vw, 1rem);
+    color: var(--muted);
+  }
+  .stage {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+  }
+  .stage canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #counter {
+    position: absolute;
+    bottom: 14px;
+    left: 16px;
+    direction: ltr;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: .9rem;
+    color: var(--muted);
+  }
+  button {
+    position: absolute;
+    bottom: 10px;
+    right: 16px;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid #343a6b;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: .85rem;
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+  <a class="back" href="../animations.html">→ بازگشت به انیمیشن‌ها</a>
+  <header>
+    <h1>INFC.1405</h1>
+    <p>منحنی گل با مسیرهای نئونی</p>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="trail" aria-hidden="true"></canvas>
+    <canvas id="head" aria-hidden="true"></canvas>
+    <div id="counter">i = 0 / 1400</div>
+    <button id="replay" type="button">پخش مجدد</button>
+  </div>
+
+<script>
+(function () {
+  const N = 1400;              // number of points
+  const DURATION = 13000;      // ms to draw the whole curve
+  const stage = document.getElementById('stage');
+  const trail = document.getElementById('trail');
+  const head  = document.getElementById('head');
+  const tctx = trail.getContext('2d');
+  const hctx = head.getContext('2d');
+  const counter = document.getElementById('counter');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let W, H, S, cx, cy, dpr, start, drawn, raf;
+
+  // Rose curve: r = cos(7a/3), drawn over 12*pi
+  function point(i) {
+    const a = (i / N) * 12 * Math.PI;
+    const r = Math.cos((7 * a) / 3);
+    return [S * r * Math.cos(a), S * r * Math.sin(a)];
+  }
+
+  function hsl(i) { return (i / N) * 360; }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = stage.clientWidth;
+    H = stage.clientHeight;
+    [trail, head].forEach(c => {
+      c.width = W * dpr;
+      c.height = H * dpr;
+    });
+    tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    hctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    S = Math.min(W, H) * 0.42;
+    cx = W / 2;
+    cy = H / 2;
+  }
+
+  function drawStep(i) {
+    const [x, y] = point(i);
+    const h = hsl(i);
+    // thin spoke from the centre
+    tctx.strokeStyle = `hsla(${h}, 100%, 60%, 0.07)`;
+    tctx.lineWidth = 1;
+    tctx.beginPath();
+    tctx.moveTo(cx, cy);
+    tctx.lineTo(cx + x, cy - y);
+    tctx.stroke();
+    // glowing dot
+    tctx.shadowColor = `hsl(${h}, 100%, 60%)`;
+    tctx.shadowBlur = 8;
+    tctx.fillStyle = `hsl(${h}, 100%, 62%)`;
+    tctx.beginPath();
+    tctx.arc(cx + x, cy - y, 1.8, 0, Math.PI * 2);
+    tctx.fill();
+    tctx.shadowBlur = 0;
+  }
+
+  function drawHead(i) {
+    hctx.clearRect(0, 0, W, H);
+    const [x, y] = point(i);
+    const px = cx + x, py = cy - y;
+    const g = hctx.createRadialGradient(px, py, 0, px, py, 16);
+    g.addColorStop(0, 'rgba(255,255,255,1)');
+    g.addColorStop(0.3, 'rgba(255,255,255,0.45)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    hctx.fillStyle = g;
+    hctx.beginPath();
+    hctx.arc(px, py, 16, 0, Math.PI * 2);
+    hctx.fill();
+  }
+
+  function frame(now) {
+    const t = Math.min((now - start) / DURATION, 1);
+    const target = Math.floor(t * N);
+    while (drawn < target) {
+      drawn++;
+      drawStep(drawn);
+    }
+    drawHead(drawn);
+    counter.textContent = 'i = ' + drawn + ' / ' + N;
+    if (t < 1) {
+      raf = requestAnimationFrame(frame);
+    } else {
+      hctx.clearRect(0, 0, W, H);
+    }
+  }
+
+  function run() {
+    cancelAnimationFrame(raf);
+    resize();
+    tctx.clearRect(0, 0, W, H);
+    hctx.clearRect(0, 0, W, H);
+    drawn = 0;
+    if (reduceMotion) {
+      for (let i = 1; i <= N; i++) drawStep(i);
+      drawn = N;
+      counter.textContent = 'i = ' + N + ' / ' + N;
+      return;
+    }
+    start = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+
+  document.getElementById('replay').addEventListener('click', run);
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(run, 200); });
+  run();
+})();
+</script>
+</body>
+</html>
