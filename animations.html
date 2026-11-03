@@ -104,6 +104,14 @@
         <a class="run" href="animations/rose.html" data-fa="اجرا" data-en="Run">اجرا</a>
       </article>
 
+      <article class="card anim-card">
+        <canvas class="thumb" data-shape="student" role="img" aria-label="Student Day"></canvas>
+        <h3 data-fa="روز دانش‌آموز" data-en="Student Day">روز دانش‌آموز</h3>
+        <p data-fa="تبریک ۱۳ آبان؛ از یک نقطه، کلاه فارغ‌التحصیلی و کتاب روی دفتر خط‌دار کشیده می‌شود."
+           data-en="A 13 Aban greeting: from a single point, a graduation cap and book are drawn on ruled notebook paper.">تبریک ۱۳ آبان؛ از یک نقطه، کلاه فارغ‌التحصیلی و کتاب روی دفتر خط‌دار کشیده می‌شود.</p>
+        <a class="run" href="animations/student-day.html" data-fa="اجرا" data-en="Run">اجرا</a>
+      </article>
+
     </div>
   </section>
 </main>
@@ -164,6 +172,62 @@
       ctx.fill();
       ctx.shadowBlur = 0;
     }
+  });
+
+  /* پیش‌نمایش کارت روز دانش‌آموز: کلاه و کتاب نئونی */
+  document.querySelectorAll('canvas.thumb[data-shape="student"]').forEach(function (canvas) {
+    var size = 360;
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    var S = size * 0.36, cx = size / 2, cy = size * 0.47;
+
+    // دفتر خط‌دار
+    ctx.strokeStyle = 'rgba(45,212,191,.12)';
+    ctx.lineWidth = 1;
+    for (var y = 24; y < size; y += 24) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size, y); ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(255,110,140,.3)';
+    ctx.beginPath(); ctx.moveTo(size - 30, 0); ctx.lineTo(size - 30, size); ctx.stroke();
+
+    function chaikin(p, n) {
+      for (var k = 0; k < n; k++) {
+        var q = [p[0]];
+        for (var i = 0; i < p.length - 1; i++) {
+          var a = p[i], b = p[i + 1];
+          q.push([.75 * a[0] + .25 * b[0], .75 * a[1] + .25 * b[1]], [.25 * a[0] + .75 * b[0], .25 * a[1] + .75 * b[1]]);
+        }
+        q.push(p[p.length - 1]);
+        p = q;
+      }
+      return p;
+    }
+    var shapes = [
+      [[[-1,-0.55],[0,-0.85],[1,-0.55],[0,-0.25],[-1,-0.55]], false],
+      [[[-0.52,-0.40],[-0.52,-0.12],[-0.35,0],[0,0.06],[0.35,0],[0.52,-0.12],[0.52,-0.40]], true],
+      [[[0.85,-0.60],[0.85,-0.14],[0.80,-0.08],[0.85,0],[0.90,-0.08],[0.85,-0.14]], true],
+      [[[0,0.42],[-0.3,0.33],[-0.65,0.33],[-0.95,0.42],[-0.95,0.92],[-0.65,0.84],[-0.3,0.84],[0,0.92],[0,0.42]], true],
+      [[[0,0.42],[0.3,0.33],[0.65,0.33],[0.95,0.42],[0.95,0.92],[0.65,0.84],[0.3,0.84],[0,0.92]], true],
+      [[[-0.78,0.53],[-0.2,0.51]], false], [[[-0.78,0.64],[-0.2,0.62]], false], [[[-0.78,0.75],[-0.2,0.73]], false],
+      [[[0.2,0.51],[0.78,0.53]], false], [[[0.2,0.62],[0.78,0.64]], false], [[[0.2,0.73],[0.78,0.75]], false]
+    ];
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3;
+    shapes.forEach(function (sh, idx) {
+      var pts = sh[1] ? chaikin(sh[0], 2) : sh[0];
+      var h = (170 + (idx / shapes.length) * 300) % 360;
+      ctx.strokeStyle = 'hsl(' + h + ',100%,64%)';
+      ctx.shadowColor = 'hsl(' + h + ',100%,60%)';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      pts.forEach(function (p, i) {
+        if (i === 0) ctx.moveTo(cx + p[0] * S, cy + p[1] * S); else ctx.lineTo(cx + p[0] * S, cy + p[1] * S);
+      });
+      ctx.stroke();
+    });
+    ctx.shadowBlur = 0;
   });
 })();
 </script>
