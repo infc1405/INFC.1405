@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ساخت QR کد | گروه فریلنسری INFC.1405</title>
+<link rel="icon" href="assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container brand-row">
+    <div class="brand-name-block">
+      <h1 class="brand-name" data-fa="گروه فریلنسری INFC.1405" data-en="INFC.1405 Freelance Group">گروه فریلنسری INFC.1405</h1>
+      <p class="brand-tagline" data-fa="از سال ۲۰۲۶" data-en="Since 2026">از سال ۲۰۲۶</p>
+    </div>
+    <div class="brand-logo-block">
+      <img src="assets/logo.jpg" alt="INFC.1405 logo">
+      <div class="clock-date">
+        <div class="clock">--:--:--</div>
+        <div class="date">-</div>
+      </div>
+    </div>
+  </div>
+
+  <svg class="circuit-divider" viewBox="0 0 1100 14" preserveAspectRatio="none">
+    <path d="M0,7 H1100"></path>
+    <circle cx="220" cy="7" r="3"></circle>
+    <circle cx="640" cy="7" r="3"></circle>
+    <circle cx="900" cy="7" r="3"></circle>
+  </svg>
+
+  <div class="container">
+    <nav class="main-nav">
+      <ul class="nav-links">
+        <li><a href="index.html" data-fa="خانه" data-en="Home">خانه</a></li>
+        <li><a href="services.html" data-fa="خدمات" data-en="Services">خدمات</a></li>
+        <li><a href="about.html" data-fa="درباره ما" data-en="About Us">درباره ما</a></li>
+        <li><a href="contact.html" data-fa="ارتباط با ما" data-en="Contact Us">ارتباط با ما</a></li>
+        <li><a href="gallery.html" data-fa="نمونه‌کار" data-en="Portfolio">نمونه‌کار</a></li>
+        <li><a href="animations.html" data-fa="انیمیشن‌ها" data-en="Animations">انیمیشن‌ها</a></li>
+        <li><a href="qr.html" class="active" data-fa="ساخت QR کد" data-en="QR Code Maker">ساخت QR کد</a></li>
+      </ul>
+      <button class="lang-toggle" type="button">
+        <span class="lang-toggle-label">English</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <p class="eyebrow" data-fa="ابزارها" data-en="Tools">ابزارها</p>
+  <h1 class="page-title" data-fa="ساخت QR کد برای سایت، شبکه‌های اجتماعی و بیشتر" data-en="QR codes for your website, social media and more">ساخت QR کد برای سایت، شبکه‌های اجتماعی و بیشتر</h1>
+  <p class="lead"
+     data-fa="نوع QR را انتخاب کنید: سایت، اینستاگرام، تلگرام، واتساپ، تماس، ایمیل، متن یا وای‌فای. می‌توانید لوگوی خودتان را وسط آن بگذارید و برای وب یا چاپ دانلود کنید. همه‌چیز روی دستگاه شما انجام می‌شود و چیزی ارسال نمی‌شود."
+     data-en="Pick the QR type: website, Instagram, Telegram, WhatsApp, phone call, email, text or Wi-Fi. You can place your own logo in the middle and download it for web or print. Everything runs on your device and nothing is uploaded.">
+     نوع QR را انتخاب کنید: سایت، اینستاگرام، تلگرام، واتساپ، تماس، ایمیل، متن یا وای‌فای. می‌توانید لوگوی خودتان را وسط آن بگذارید و برای وب یا چاپ دانلود کنید. همه‌چیز روی دستگاه شما انجام می‌شود و چیزی ارسال نمی‌شود.
+  </p>
+
+  <section class="qr-layout">
+    <div class="qr-panel" aria-labelledby="qrSettingsTitle">
+      <h2 class="qr-section-title" id="qrSettingsTitle" data-fa="تنظیمات" data-en="Settings">تنظیمات</h2>
+
+      <div class="qr-field">
+        <label class="qr-label" for="qrType" data-fa="نوع QR" data-en="QR type">نوع QR</label>
+        <select id="qrType">
+          <option value="url" selected data-fa="وب‌سایت" data-en="Website">وب‌سایت</option>
+          <option value="instagram" data-fa="اینستاگرام" data-en="Instagram">اینستاگرام</option>
+          <option value="telegram" data-fa="تلگرام" data-en="Telegram">تلگرام</option>
+          <option value="whatsapp" data-fa="واتساپ" data-en="WhatsApp">واتساپ</option>
+          <option value="phone" data-fa="تماس تلفنی" data-en="Phone call">تماس تلفنی</option>
+          <option value="email" data-fa="ایمیل" data-en="Email">ایمیل</option>
+          <option value="text" data-fa="متن ساده" data-en="Plain text">متن ساده</option>
+          <option value="wifi" data-fa="وای‌فای" data-en="Wi-Fi">وای‌فای</option>
+        </select>
+      </div>
+
+      <div class="qr-field" data-type="url">
+        <label class="qr-label" for="qrUrl" data-fa="آدرس سایت" data-en="Website address">آدرس سایت</label>
+        <input id="qrUrl" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="example.com">
+        <p class="qr-hint" data-fa="اگر https:// ننویسید، خودکار اضافه می‌شود." data-en="If you leave out https://, it is added automatically.">اگر https:// ننویسید، خودکار اضافه می‌شود.</p>
+      </div>
+
+      <div class="qr-field" data-type="instagram" hidden>
+        <label class="qr-label" for="qrIg" data-fa="نام کاربری اینستاگرام" data-en="Instagram username">نام کاربری اینستاگرام</label>
+        <input id="qrIg" type="text" autocomplete="off" spellcheck="false" placeholder="username">
+        <p class="qr-hint" data-fa="فقط نام کاربری یا لینک صفحه را بنویسید؛ @ لازم نیست." data-en="Type just the username or the page link; no @ needed.">فقط نام کاربری یا لینک صفحه را بنویسید؛ @ لازم نیست.</p>
+      </div>
+
+      <div class="qr-field" data-type="telegram" hidden>
+        <label class="qr-label" for="qrTg" data-fa="نام کاربری تلگرام" data-en="Telegram username">نام کاربری تلگرام</label>
+        <input id="qrTg" type="text" autocomplete="off" spellcheck="false" placeholder="username">
+        <p class="qr-hint" data-fa="فقط نام کاربری (حداقل ۵ حرف) یا لینک t.me را بنویسید؛ @ لازم نیست." data-en="Type just the username (at least 5 characters) or the t.me link; no @ needed.">فقط نام کاربری (حداقل ۵ حرف) یا لینک t.me را بنویسید؛ @ لازم نیست.</p>
+      </div>
+
+      <div class="qr-field" data-type="whatsapp phone" hidden>
+        <label class="qr-label" for="qrPhone" data-fa="شماره تلفن" data-en="Phone number">شماره تلفن</label>
+        <input id="qrPhone" type="text" inputmode="tel" autocomplete="off" spellcheck="false" placeholder="09121234567">
+        <p class="qr-hint" data-fa="اگر شماره با ۰ شروع شود، کد ایران (۹۸) خودکار اضافه می‌شود. برای شماره‌ی کشورهای دیگر با + و کد کشور بنویسید." data-en="A number starting with 0 gets the Iran code (98) added automatically. For other countries, write + and the country code.">اگر شماره با ۰ شروع شود، کد ایران (۹۸) خودکار اضافه می‌شود. برای شماره‌ی کشورهای دیگر با + و کد کشور بنویسید.</p>
+      </div>
+
+      <div class="qr-field" data-type="email" hidden>
+        <label class="qr-label" for="qrEmail" data-fa="آدرس ایمیل" data-en="Email address">آدرس ایمیل</label>
+        <input id="qrEmail" type="text" inputmode="email" autocomplete="off" spellcheck="false" placeholder="name@example.com">
+      </div>
+
+      <div class="qr-field" data-type="text" hidden>
+        <label class="qr-label" for="qrText" data-fa="متن" data-en="Text">متن</label>
+        <textarea id="qrText" rows="4" spellcheck="false" data-fa-placeholder="هر متنی که می‌خواهید بعد از اسکن نمایش داده شود" data-en-placeholder="Any text you want shown after scanning" placeholder="هر متنی که می‌خواهید بعد از اسکن نمایش داده شود"></textarea>
+        <p class="qr-hint" data-fa="هرچه متن کوتاه‌تر باشد، QR ساده‌تر و اسکنش راحت‌تر است." data-en="The shorter the text, the simpler and easier to scan the QR.">هرچه متن کوتاه‌تر باشد، QR ساده‌تر و اسکنش راحت‌تر است.</p>
+      </div>
+
+      <div data-type="wifi" hidden>
+        <div class="qr-field">
+          <label class="qr-label" for="qrSsid" data-fa="نام شبکه (SSID)" data-en="Network name (SSID)">نام شبکه (SSID)</label>
+          <input id="qrSsid" class="qr-free" type="text" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="qr-field">
+          <label class="qr-label" for="qrWifiSec" data-fa="نوع امنیت" data-en="Security">نوع امنیت</label>
+          <select id="qrWifiSec">
+            <option value="WPA" selected data-fa="WPA/WPA2/WPA3 (رایج‌ترین)" data-en="WPA/WPA2/WPA3 (most common)">WPA/WPA2/WPA3 (رایج‌ترین)</option>
+            <option value="WEP" data-fa="WEP (قدیمی)" data-en="WEP (old)">WEP (قدیمی)</option>
+            <option value="nopass" data-fa="بدون رمز" data-en="No password">بدون رمز</option>
+          </select>
+        </div>
+        <div class="qr-field" id="qrWifiPassField">
+          <label class="qr-label" for="qrWifiPass" data-fa="رمز وای‌فای" data-en="Wi-Fi password">رمز وای‌فای</label>
+          <input id="qrWifiPass" class="qr-free" type="text" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="qr-field">
+          <label class="qr-check"><input id="qrWifiHidden" type="checkbox"> <span data-fa="شبکه مخفی است" data-en="Hidden network">شبکه مخفی است</span></label>
+          <p class="qr-hint" data-fa="هر کسی این QR را ببیند، رمز شبکه را می‌تواند بخواند. فقط جایی چاپ کنید که اشکالی ندارد." data-en="Anyone who sees this QR can read the network password. Only print it where that is fine.">هر کسی این QR را ببیند، رمز شبکه را می‌تواند بخواند. فقط جایی چاپ کنید که اشکالی ندارد.</p>
+        </div>
+      </div>
+
+      <div class="qr-field">
+        <label class="qr-label" for="qrLevel" data-fa="سطح تصحیح خطا" data-en="Error correction level">سطح تصحیح خطا</label>
+        <select id="qrLevel">
+          <option value="L" data-fa="کم (L): QR ساده‌تر" data-en="Low (L): simpler QR">کم (L): QR ساده‌تر</option>
+          <option value="M" selected data-fa="متوسط (M): پیشنهادی" data-en="Medium (M): recommended">متوسط (M): پیشنهادی</option>
+          <option value="Q" data-fa="بالا (Q)" data-en="High (Q)">بالا (Q)</option>
+          <option value="H" data-fa="بسیار بالا (H)" data-en="Very high (H)">بسیار بالا (H)</option>
+        </select>
+      </div>
+
+      <div class="qr-field">
+        <label class="qr-label" for="qrSize" data-fa="اندازه فایل خروجی" data-en="Output size">اندازه فایل خروجی</label>
+        <select id="qrSize">
+          <option value="512" data-fa="۵۱۲ پیکسل: وب و شبکه‌های اجتماعی" data-en="512 px: web and social media">۵۱۲ پیکسل: وب و شبکه‌های اجتماعی</option>
+          <option value="1024" selected data-fa="۱۰۲۴ پیکسل: پیشنهادی" data-en="1024 px: recommended">۱۰۲۴ پیکسل: پیشنهادی</option>
+          <option value="2048" data-fa="۲۰۴۸ پیکسل: چاپ" data-en="2048 px: print">۲۰۴۸ پیکسل: چاپ</option>
+        </select>
+      </div>
+
+      <div class="qr-field">
+        <div class="qr-row">
+          <div>
+            <label class="qr-label" for="qrFg" data-fa="رنگ QR" data-en="QR color">رنگ QR</label>
+            <input id="qrFg" type="color" value="#000000">
+          </div>
+          <div>
+            <label class="qr-label" for="qrBg" data-fa="رنگ زمینه" data-en="Background color">رنگ زمینه</label>
+            <input id="qrBg" type="color" value="#ffffff">
+          </div>
+        </div>
+        <p class="qr-hint" data-fa="برای اسکن راحت، QR تیره و زمینه روشن بگذارید." data-en="For easy scanning, use a dark QR on a light background.">برای اسکن راحت، QR تیره و زمینه روشن بگذارید.</p>
+      </div>
+
+      <hr class="qr-divider">
+
+      <h2 class="qr-section-title" data-fa="لوگو داخل QR (اختیاری)" data-en="Logo inside the QR (optional)">لوگو داخل QR (اختیاری)</h2>
+      <p class="qr-hint" data-fa="با افزودن لوگو، سطح تصحیح خطا خودکار روی «بسیار بالا» می‌رود تا QR قابل اسکن بماند." data-en="When a logo is added, error correction is set to “Very high” automatically so the QR stays scannable.">با افزودن لوگو، سطح تصحیح خطا خودکار روی «بسیار بالا» می‌رود تا QR قابل اسکن بماند.</p>
+
+      <div class="qr-field" style="margin-top:14px">
+        <div class="qr-btn-row">
+          <button type="button" class="qr-btn ghost" id="qrBrandLogo" data-fa="لوگوی INFC.1405" data-en="INFC.1405 logo">لوگوی INFC.1405</button>
+          <label class="qr-btn ghost qr-file">
+            <span data-fa="انتخاب از دستگاه" data-en="Choose from device">انتخاب از دستگاه</span>
+            <input id="qrLogoFile" type="file" accept="image/*">
+          </label>
+          <button type="button" class="qr-btn ghost" id="qrRemoveLogo" hidden data-fa="حذف لوگو" data-en="Remove logo">حذف لوگو</button>
+        </div>
+      </div>
+
+      <div class="qr-field" id="qrLogoOpts" hidden>
+        <label class="qr-label" for="qrLogoSize" data-fa="اندازه لوگو" data-en="Logo size">اندازه لوگو</label>
+        <div class="qr-range-row">
+          <input id="qrLogoSize" type="range" min="14" max="30" step="1" value="22">
+          <output id="qrLogoSizeVal" for="qrLogoSize">22%</output>
+        </div>
+        <p class="qr-hint" data-fa="لوگوی کوچک‌تر، اسکن مطمئن‌تر. بعد از ساخت، حتماً با گوشی تست کنید." data-en="A smaller logo scans more reliably. Always test with your phone after creating it.">لوگوی کوچک‌تر، اسکن مطمئن‌تر. بعد از ساخت، حتماً با گوشی تست کنید.</p>
+      </div>
+    </div>
+
+    <div class="qr-panel qr-stage" aria-label="QR">
+      <div class="qr-frame">
+        <canvas id="qrCanvas" role="img" aria-label="QR code"></canvas>
+        <div class="qr-empty" id="qrEmpty"></div>
+      </div>
+      <div class="qr-actions">
+        <button type="button" class="qr-btn" id="qrDlPng" disabled data-fa="دانلود PNG" data-en="Download PNG">دانلود PNG</button>
+        <button type="button" class="qr-btn ghost" id="qrDlSvg" disabled data-fa="دانلود SVG" data-en="Download SVG">دانلود SVG</button>
+      </div>
+      <p class="qr-msg" id="qrMsg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <svg class="circuit-divider container" viewBox="0 0 1100 14" preserveAspectRatio="none">
+    <path d="M0,7 H1100"></path>
+    <circle cx="350" cy="7" r="3"></circle>
+    <circle cx="760" cy="7" r="3"></circle>
+  </svg>
+  <p class="footer-credit" data-fa="طراحی توسط گروه مهندسین INFC.1405" data-en="Designed by INFC.1405 Engineering Team">
+    طراحی توسط <strong>گروه مهندسین INFC.1405</strong>
+  </p>
+  <p class="visit-counter">
+    <span data-fa="تعداد بازدید:" data-en="Visits:">تعداد بازدید:</span>
+    <span class="count">0</span>
+  </p>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/qr.js"></script>
+</body>
+</html>
