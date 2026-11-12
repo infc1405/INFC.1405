@@ -4,6 +4,9 @@
    - live clock + date (Jalali when fa, Gregorian when en)
    - simple local visit counter (placeholder until real
      analytics is wired up)
+   - gallery + lightbox
+   - exposes window.INFC and fires "infc:langchange" so page
+     scripts (e.g. qr.js) can re-render their own dynamic text
    ========================================================= */
 
 (function () {
@@ -15,7 +18,17 @@
   /* ---------------- language ---------------- */
 
   function getLang() {
-    return localStorage.getItem(LANG_KEY) || "fa";
+    try {
+      return localStorage.getItem(LANG_KEY) || "fa";
+    } catch (e) {
+      return "fa";
+    }
+  }
+
+  function setLang(lang) {
+    try {
+      localStorage.setItem(LANG_KEY, lang);
+    } catch (e) { /* storage blocked: language just won't persist */ }
   }
 
   function applyLang(lang) {
@@ -44,11 +57,14 @@
     if (toggle) toggle.textContent = lang === "fa" ? "English" : "فارسی";
 
     renderClockDate(lang);
+    renderGallery(lang);
+
+    document.dispatchEvent(new CustomEvent("infc:langchange", { detail: { lang: lang } }));
   }
 
   function toggleLang() {
     var next = getLang() === "fa" ? "en" : "fa";
-    localStorage.setItem(LANG_KEY, next);
+    setLang(next);
     applyLang(next);
   }
 
@@ -122,8 +138,11 @@
   // real shared analytics count. Swap in a real service (e.g. a small
   // backend, or a hit-counter API) when the site goes live.
   function renderVisitCounter() {
-    var count = parseInt(localStorage.getItem(VISIT_KEY) || "0", 10) + 1;
-    localStorage.setItem(VISIT_KEY, count);
+    var count = 1;
+    try {
+      count = parseInt(localStorage.getItem(VISIT_KEY) || "0", 10) + 1;
+      localStorage.setItem(VISIT_KEY, count);
+    } catch (e) { /* storage blocked: show 1 */ }
     document.querySelectorAll(".visit-counter .count").forEach(function (el) {
       el.textContent = (getLang() === "fa" ? faDigits(count) : count);
     });
@@ -181,11 +200,16 @@
     if (overlay) overlay.classList.remove("open");
   }
 
+  /* ---------------- shared API for page scripts ---------------- */
+  window.INFC = {
+    getLang: getLang,
+    faDigits: faDigits
+  };
+
   /* ---------------- init ---------------- */
   document.addEventListener("DOMContentLoaded", function () {
     applyLang(getLang());
     renderVisitCounter();
-    renderGallery(getLang());
 
     var toggleBtn = document.querySelector(".lang-toggle");
     if (toggleBtn) toggleBtn.addEventListener("click", toggleLang);
@@ -200,13 +224,10 @@
       });
     }
 
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeLightbox();
+    });
+
     setInterval(function () { renderClockDate(getLang()); }, 1000);
   });
-
-  // re-render gallery captions when language changes
-  var _applyLang = applyLang;
-  applyLang = function (lang) {
-    _applyLang(lang);
-    renderGallery(lang);
-  };
 })();
