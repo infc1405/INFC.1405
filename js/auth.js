@@ -1,4 +1,5 @@
-/* INFC.1405 - عضویت و تاریخچه QR (Firebase) */
+/* INFC.1405 - عضویت و تاریخچه QR (Firebase)
+   کار می‌کند در: صفحه اول (عنصر #accountMount) و صفحه QR */
 const V = "10.14.1";
 const firebaseConfig = {
   apiKey: "AIzaSyCFOQ6bS5FrYoGmpuwjeN6y9Lk3T87SgiU",
@@ -37,6 +38,7 @@ const CSS = `
 .hist-item{border:1px solid rgba(128,128,128,.4);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .hist-item img{width:100%;max-width:150px;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:8px;align-self:center}
 .hist-meta{font-size:.88em;opacity:.9;word-break:break-word}
+a.qr-btn{text-decoration:none;display:inline-block}
 `;
 
 const ERR = {
@@ -57,18 +59,26 @@ const ERR = {
 const errText = (e) => ERR[(e && e.code) || ""] || ["خطایی رخ داد. دوباره امتحان کنید.", "Something went wrong. Please try again."];
 
 async function main() {
-  const layout = document.querySelector(".qr-layout");
+  const mount = $("accountMount");            // صفحه اول
+  const layout = document.querySelector(".qr-layout"); // صفحه QR
   const dlPng = $("qrDlPng");
-  if (!layout || !dlPng) return;
+  if (!mount && !(layout && dlPng)) return;
+  const onQr = !mount && !!(layout && dlPng);
 
   document.head.append(h("style", null, CSS));
   const authBox = h("section", { class: "auth-wrap" });
   const historyBox = h("section", { class: "auth-wrap" });
-  const nudge = h("div", { class: "auth-nudge", hidden: true });
-  layout.before(authBox);
-  layout.after(historyBox);
-  const actions = layout.querySelector(".qr-actions");
-  if (actions) actions.after(nudge); else layout.append(nudge);
+  let nudge = null;
+
+  if (mount) {
+    mount.append(authBox, historyBox);
+  } else {
+    layout.before(authBox);
+    layout.after(historyBox);
+    nudge = h("div", { class: "auth-nudge", hidden: true });
+    const actions = layout.querySelector(".qr-actions");
+    if (actions) actions.after(nudge); else layout.append(nudge);
+  }
 
   const S = { ready: false, failed: false, user: null, open: false, mode: "login",
               busy: false, email: "", pass: "", msg: null, nudge: null,
@@ -133,12 +143,18 @@ async function main() {
   }
   function typeLabel(type) {
     const o = document.querySelector('#qrType option[value="' + type + '"]');
-    return o ? o.getAttribute(isFa() ? "data-fa" : "data-en") || type : type;
+    if (o) return o.getAttribute(isFa() ? "data-fa" : "data-en") || type;
+    const names = {
+      url: ["وب‌سایت", "Website"], instagram: ["اینستاگرام", "Instagram"], telegram: ["تلگرام", "Telegram"],
+      whatsapp: ["واتساپ", "WhatsApp"], phone: ["تماس تلفنی", "Phone call"], email: ["ایمیل", "Email"],
+      text: ["متن ساده", "Plain text"]
+    };
+    return names[type] ? t(names[type][0], names[type][1]) : type;
   }
   function setNudge(pair, kind) { S.nudge = pair ? { p: pair, kind } : null; renderNudge(); }
 
   async function saveCurrent() {
-    if (!S.user || !fb || dlPng.disabled) return;
+    if (!S.user || !fb || !dlPng || dlPng.disabled) return;
     const type = $("qrType").value;
     if (type === "wifi") {
       setNudge(["QR وای‌فای در تاریخچه ذخیره نمی‌شود، چون رمز داخل تصویر است.", "Wi-Fi QR codes are not saved to history because the image contains the password."], "warn");
@@ -179,7 +195,9 @@ async function main() {
     if (S.user) {
       panel.append(title("عضو سایت", "Site member"),
         h("p", { class: "qr-hint" }, t("وارد شده‌اید با: ", "Signed in as: "), h("bdi", null, S.user.displayName || S.user.email || "")),
-        h("div", { class: "qr-btn-row" }, h("button", { type: "button", class: "qr-btn ghost", onclick: doSignOut }, t("خروج", "Sign out"))));
+        h("div", { class: "qr-btn-row" },
+          mount ? h("a", { class: "qr-btn", href: "tools.html" }, t("رفتن به ابزارها", "Go to tools")) : null,
+          h("button", { type: "button", class: "qr-btn ghost", onclick: doSignOut }, t("خروج", "Sign out"))));
       return;
     }
     panel.append(title("عضویت در سایت (اختیاری)", "Join the site (optional)"),
@@ -228,12 +246,13 @@ async function main() {
     if (S.history === null) { panel.append(h("p", { class: "qr-hint" }, t("در حال بارگذاری…", "Loading…"))); return; }
     if (S.histErr) { panel.append(h("p", { class: "qr-msg err" }, t("تاریخچه بارگذاری نشد.", "Could not load history."))); return; }
     if (!S.history.length) {
-      panel.append(h("p", { class: "qr-hint" }, t("هنوز QRای ذخیره نشده. هر بار PNG یا SVG دانلود کنید، خودکار اینجا ذخیره می‌شود.", "Nothing saved yet. Each time you download a PNG or SVG it is saved here automatically.")));
+      panel.append(h("p", { class: "qr-hint" }, t("هنوز QRای ذخیره نشده. هر بار در صفحه‌ی ساخت QR فایل PNG یا SVG دانلود کنید، خودکار اینجا ذخیره می‌شود.", "Nothing saved yet. Each time you download a PNG or SVG on the QR page, it is saved here automatically.")));
       return;
     }
     panel.append(h("div", { class: "hist-grid" }, S.history.map(item)));
   }
   function renderNudge() {
+    if (!nudge) return;
     nudge.replaceChildren();
     nudge.hidden = true;
     if (S.nudge) {
@@ -250,13 +269,16 @@ async function main() {
   }
   function render() { renderAuth(); renderHistory(); renderNudge(); }
 
-  /* ---------- اتصال به رویدادها ---------- */
-  dlPng.addEventListener("click", saveCurrent);
-  const dlSvg = $("qrDlSvg");
-  if (dlSvg) dlSvg.addEventListener("click", saveCurrent);
-  layout.addEventListener("input", () => { if (S.nudge) { S.nudge = null; renderNudge(); } });
-  layout.addEventListener("change", () => { if (S.nudge) { S.nudge = null; renderNudge(); } });
-  new MutationObserver(renderNudge).observe(dlPng, { attributes: true, attributeFilter: ["disabled"] });
+  /* ---------- اتصال به رویدادهای صفحه QR ---------- */
+  if (onQr) {
+    dlPng.addEventListener("click", saveCurrent);
+    const dlSvg = $("qrDlSvg");
+    if (dlSvg) dlSvg.addEventListener("click", saveCurrent);
+    const clearNudge = () => { if (S.nudge) { S.nudge = null; renderNudge(); } };
+    layout.addEventListener("input", clearNudge);
+    layout.addEventListener("change", clearNudge);
+    new MutationObserver(renderNudge).observe(dlPng, { attributes: true, attributeFilter: ["disabled"] });
+  }
   document.addEventListener("infc:langchange", render);
 
   render();
