@@ -205,10 +205,11 @@ h1.page-title{
   margin:0 0 18px;
   line-height:1.25;
 }
+/* max-width removed: it left an empty area on the left of wide screens */
 p.lead{
   color:var(--text-muted);
   font-size:1.05rem;
-  max-width:640px;
+  max-width:none;
   margin:0 0 8px;
 }
 .placeholder-note{
