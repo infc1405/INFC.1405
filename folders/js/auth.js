@@ -1,4 +1,4 @@
-/* INFC.1405 - عضویت و تاریخچه QR (Firebase)
+/* INFC.1405 - عضویت و تاریخچه QR (Firebase) + تأیید ایمیل
    کار می‌کند در: صفحه اول (عنصر #accountMount) و صفحه QR */
 const V = "10.14.1";
 const firebaseConfig = {
@@ -9,6 +9,8 @@ const firebaseConfig = {
   messagingSenderId: "527376014399",
   appId: "1:527376014399:web:ef9df8506c69b1bc132c8a"
 };
+
+const RESEND_WAIT_MS = 60000; // فاصله‌ی بین دو بار ارسال ایمیل تأیید
 
 const $ = (id) => document.getElementById(id);
 const isFa = () => !(window.INFC && window.INFC.getLang && window.INFC.getLang() === "en");
@@ -82,7 +84,7 @@ async function main() {
 
   const S = { ready: false, failed: false, user: null, open: false, mode: "login",
               busy: false, email: "", pass: "", msg: null, nudge: null,
-              history: null, histErr: false };
+              history: null, histErr: false, resendAt: 0 };
   let fb = null;
   let lastSaved = "";
 
@@ -93,8 +95,18 @@ async function main() {
     S.busy = true; setMsg(null); render();
     try {
       const A = fb.A, email = S.email.trim();
-      if (S.mode === "signup") await A.createUserWithEmailAndPassword(fb.auth, email, S.pass);
-      else await A.signInWithEmailAndPassword(fb.auth, email, S.pass);
+      if (S.mode === "signup") {
+        const cred = await A.createUserWithEmailAndPassword(fb.auth, email, S.pass);
+        try {
+          await A.sendEmailVerification(cred.user);
+          S.resendAt = Date.now();
+          setMsg(["حساب ساخته شد. لینک تأیید به ایمیل شما ارسال شد (پوشه‌ی اسپم را هم ببینید).", "Account created. A verification link was sent to your email (check spam too)."], "ok");
+        } catch (e2) {
+          setMsg(["حساب ساخته شد، اما ارسال ایمیل تأیید ممکن نشد. دکمه‌ی «ارسال دوباره» را بزنید.", "Account created, but the verification email could not be sent. Use the resend button."], "err");
+        }
+      } else {
+        await A.signInWithEmailAndPassword(fb.auth, email, S.pass);
+      }
       S.open = false; S.pass = "";
     } catch (e) { setMsg(errText(e), "err"); }
     S.busy = false; render();
@@ -117,7 +129,50 @@ async function main() {
   async function doSignOut() {
     try { await fb.A.signOut(fb.auth); } catch (e) {}
     lastSaved = "";
+    setMsg(null);
   }
+
+  /* ---------- تأیید ایمیل ---------- */
+  async function doResend() {
+    const u = fb && fb.auth.currentUser;
+    if (!u) return;
+    if (Date.now() - S.resendAt < RESEND_WAIT_MS) {
+      setMsg(["کمی صبر کنید و دوباره امتحان کنید.", "Please wait a minute and try again."], "err");
+      render(); return;
+    }
+    S.busy = true; render();
+    try {
+      await fb.A.sendEmailVerification(u);
+      S.resendAt = Date.now();
+      setMsg(["لینک تأیید دوباره ارسال شد.", "Verification link sent again."], "ok");
+    } catch (e) { setMsg(errText(e), "err"); }
+    S.busy = false; render();
+  }
+  async function doCheckVerified() {
+    const u = fb && fb.auth.currentUser;
+    if (!u) return;
+    S.busy = true; render();
+    try { await u.reload(); } catch (e) { setMsg(errText(e), "err"); S.busy = false; render(); return; }
+    S.user = fb.auth.currentUser;
+    if (S.user.emailVerified) {
+      setMsg(["ایمیل شما تأیید شد.", "Your email is verified."], "ok");
+      loadHistory();
+    } else {
+      setMsg(["هنوز تأیید نشده. لینک داخل ایمیل را باز کنید و دوباره بزنید.", "Not verified yet. Open the link in your email, then try again."], "err");
+    }
+    S.busy = false; render();
+  }
+  // برگشت از اپ ایمیل به سایت: خودکار وضعیت را بررسی کن
+  window.addEventListener("focus", async () => {
+    const u = fb && fb.auth.currentUser;
+    if (!u || u.emailVerified) return;
+    try { await u.reload(); } catch (e) { return; }
+    if (u.emailVerified) {
+      S.user = u;
+      setMsg(["ایمیل شما تأیید شد.", "Your email is verified."], "ok");
+      render(); loadHistory();
+    }
+  });
 
   /* ---------- تاریخچه ---------- */
   async function loadHistory() {
@@ -155,6 +210,10 @@ async function main() {
 
   async function saveCurrent() {
     if (!S.user || !fb || !dlPng || dlPng.disabled) return;
+    if (!S.user.emailVerified) {
+      setNudge(["برای ذخیره در تاریخچه، ابتدا ایمیل خود را تأیید کنید.", "Verify your email to save to history."], "warn");
+      return;
+    }
     const type = $("qrType").value;
     if (type === "wifi") {
       setNudge(["QR وای‌فای در تاریخچه ذخیره نمی‌شود، چون رمز داخل تصویر است.", "Wi-Fi QR codes are not saved to history because the image contains the password."], "warn");
@@ -193,8 +252,17 @@ async function main() {
       return;
     }
     if (S.user) {
+      const verified = !!S.user.emailVerified;
+      const wait = Date.now() - S.resendAt < RESEND_WAIT_MS;
       panel.append(title("عضو سایت", "Site member"),
         h("p", { class: "qr-hint" }, t("وارد شده‌اید با: ", "Signed in as: "), h("bdi", null, S.user.displayName || S.user.email || "")),
+        verified ? null : h("div", { class: "auth-nudge" },
+          h("p", null, t("ایمیل شما هنوز تأیید نشده است. لینک تأیید را در صندوق ایمیل (و پوشه‌ی اسپم) باز کنید. تا قبل از تأیید، تاریخچه‌ی QR ذخیره نمی‌شود.",
+                         "Your email is not verified yet. Open the link in your inbox (and spam folder). History is not saved until you verify.")),
+          h("div", { class: "qr-btn-row" },
+            h("button", { type: "button", class: "qr-btn", disabled: S.busy, onclick: doCheckVerified }, t("تأیید کردم", "I verified")),
+            h("button", { type: "button", class: "qr-btn ghost", disabled: S.busy || wait, onclick: doResend }, t("ارسال دوباره", "Resend")))),
+        S.msg ? h("p", { class: "qr-msg" + (S.msg.kind === "err" ? " err" : ""), role: "status" }, t(S.msg.p[0], S.msg.p[1])) : null,
         h("div", { class: "qr-btn-row" },
           mount ? h("a", { class: "qr-btn", href: "tools.html" }, t("رفتن به ابزارها", "Go to tools")) : null,
           h("button", { type: "button", class: "qr-btn ghost", onclick: doSignOut }, t("خروج", "Sign out"))));
@@ -203,7 +271,9 @@ async function main() {
     panel.append(title("عضویت در سایت (اختیاری)", "Join the site (optional)"),
       h("p", { class: "qr-hint" }, t("ساخت QR بدون عضویت هم آزاد است. اعضا تاریخچه‌ی QRهای خود را می‌بینند و دوباره دانلود می‌کنند.", "Making QR codes is free without an account. Members see their QR history and can download again.")));
     if (!S.open) {
-      panel.append(h("div", { class: "qr-btn-row" }, h("button", { type: "button", class: "qr-btn", onclick: () => { S.open = true; renderAuth(); } }, t("ورود / ثبت‌نام", "Sign in / Sign up"))));
+      panel.append(
+        S.msg ? h("p", { class: "qr-msg" + (S.msg.kind === "err" ? " err" : ""), role: "status" }, t(S.msg.p[0], S.msg.p[1])) : null,
+        h("div", { class: "qr-btn-row" }, h("button", { type: "button", class: "qr-btn", onclick: () => { S.open = true; renderAuth(); } }, t("ورود / ثبت‌نام", "Sign in / Sign up"))));
       return;
     }
     const signup = S.mode === "signup";
@@ -214,7 +284,7 @@ async function main() {
       h("div", { class: "qr-field" },
         h("label", { class: "qr-label", for: "authPass" }, t("رمز عبور", "Password")),
         h("input", { id: "authPass", class: "auth-input", type: "password", dir: "ltr", autocomplete: signup ? "new-password" : "current-password", value: S.pass, oninput: (e) => { S.pass = e.target.value; } }),
-        signup ? h("p", { class: "qr-hint" }, t("حداقل ۶ کاراکتر.", "At least 6 characters.")) : null),
+        signup ? h("p", { class: "qr-hint" }, t("حداقل ۶ کاراکتر. پس از ثبت‌نام، لینک تأیید به ایمیل شما ارسال می‌شود.", "At least 6 characters. A verification link will be emailed after sign-up.")) : null),
       h("div", { class: "qr-btn-row" },
         h("button", { type: "submit", class: "qr-btn", disabled: S.busy }, signup ? t("ساخت حساب", "Create account") : t("ورود", "Sign in")),
         h("button", { type: "button", class: "qr-btn ghost", disabled: S.busy, onclick: doGoogle }, t("ورود با گوگل", "Continue with Google"))),
