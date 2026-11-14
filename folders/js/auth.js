@@ -243,18 +243,19 @@ async function main() {
     authBox.replaceChildren();
     const panel = h("div", { class: "qr-panel" });
     authBox.append(panel);
+    const add = (...k) => k.flat().forEach((c) => { if (c != null && c !== false) panel.append(c); });
     const title = (fa, en) => h("h2", { class: "qr-section-title" }, t(fa, en));
 
-    if (!S.ready) { panel.append(h("p", { class: "qr-hint" }, t("در حال بررسی وضعیت ورود…", "Checking sign-in status…"))); return; }
+    if (!S.ready) { add(h("p", { class: "qr-hint" }, t("در حال بررسی وضعیت ورود…", "Checking sign-in status…"))); return; }
     if (S.failed) {
-      panel.append(title("عضویت", "Membership"),
+      add(title("عضویت", "Membership"),
         h("p", { class: "qr-hint" }, t("سرویس عضویت در دسترس نیست (ممکن است فیلترشکن لازم باشد). ساخت QR بدون عضویت کار می‌کند.", "The membership service is unreachable (a VPN may be needed). The QR maker still works without it.")));
       return;
     }
     if (S.user) {
       const verified = !!S.user.emailVerified;
       const wait = Date.now() - S.resendAt < RESEND_WAIT_MS;
-      panel.append(title("عضو سایت", "Site member"),
+      add(title("عضو سایت", "Site member"),
         h("p", { class: "qr-hint" }, t("وارد شده‌اید با: ", "Signed in as: "), h("bdi", null, S.user.displayName || S.user.email || "")),
         verified ? null : h("div", { class: "auth-nudge" },
           h("p", null, t("ایمیل شما هنوز تأیید نشده است. لینک تأیید را در صندوق ایمیل (و پوشه‌ی اسپم) باز کنید. تا قبل از تأیید، تاریخچه‌ی QR ذخیره نمی‌شود.",
@@ -268,10 +269,10 @@ async function main() {
           h("button", { type: "button", class: "qr-btn ghost", onclick: doSignOut }, t("خروج", "Sign out"))));
       return;
     }
-    panel.append(title("عضویت در سایت (اختیاری)", "Join the site (optional)"),
+    add(title("عضویت در سایت (اختیاری)", "Join the site (optional)"),
       h("p", { class: "qr-hint" }, t("ساخت QR بدون عضویت هم آزاد است. اعضا تاریخچه‌ی QRهای خود را می‌بینند و دوباره دانلود می‌کنند.", "Making QR codes is free without an account. Members see their QR history and can download again.")));
     if (!S.open) {
-      panel.append(
+      add(
         S.msg ? h("p", { class: "qr-msg" + (S.msg.kind === "err" ? " err" : ""), role: "status" }, t(S.msg.p[0], S.msg.p[1])) : null,
         h("div", { class: "qr-btn-row" }, h("button", { type: "button", class: "qr-btn", onclick: () => { S.open = true; renderAuth(); } }, t("ورود / ثبت‌نام", "Sign in / Sign up"))));
       return;
@@ -293,7 +294,7 @@ async function main() {
         h("button", { type: "button", class: "auth-link", onclick: () => { S.mode = signup ? "login" : "signup"; setMsg(null); renderAuth(); } },
           signup ? t("حساب دارید؟ ورود", "Have an account? Sign in") : t("حساب ندارید؟ ثبت‌نام", "No account? Sign up")),
         signup ? null : h("button", { type: "button", class: "auth-link", onclick: doReset }, t("فراموشی رمز", "Forgot password"))));
-    panel.append(form);
+    add(form);
   }
 
   function dateText(ts) {
