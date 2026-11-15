@@ -302,7 +302,7 @@
 
   function clearOutput() {
     current = null;
-    canvas.hidden = true; empty.hidden = false;
+    canvas.hidden = true; canvas.style.display = 'none'; empty.hidden = false;
     dlPng.disabled = true; dlSvg.disabled = true;
     setMsg('');
   }
@@ -323,7 +323,7 @@
     var lay = build(tp, p.value);
     var o = { fg: $('bcFg').value, bg: $('bcBg').value, showText: $('bcShowText').checked, targetWidth: +$('bcSize').value };
     renderCanvas(canvas, lay, o);
-    canvas.hidden = false; empty.hidden = true;
+    canvas.hidden = false; canvas.style.display = 'block'; empty.hidden = true;
     current = { type: tp, value: p.value, svg: renderSVG(lay, o) };
     dlPng.disabled = false; dlSvg.disabled = false;
     if (p.value !== valEl.value.trim()) valEl.value = p.value;
