@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<base href="../">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ساخت بارکد | گروه فریلنسری INFC.1405</title>
+<link rel="icon" href="folders/assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="folders/css/style.css">
+<style>
+.bc-info{margin:4px 0 14px;padding:14px 16px;border:1px solid rgba(127,127,127,.4);border-radius:10px;line-height:1.9}
+.bc-info h3{margin:0 0 6px}
+.bc-info p{margin:0 0 6px}
+.bc-info .qr-btn{margin-top:8px}
+.bc-back{display:inline-block;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container brand-row">
+    <div class="brand-name-block">
+      <h1 class="brand-name" data-fa="گروه فریلنسری INFC.1405" data-en="INFC.1405 Freelance Group">گروه فریلنسری INFC.1405</h1>
+      <p class="brand-tagline" data-fa="از سال ۲۰۲۶" data-en="Since 2026">از سال ۲۰۲۶</p>
+    </div>
+    <div class="brand-logo-block">
+      <img src="folders/assets/logo.jpg" alt="INFC.1405 logo">
+      <div class="clock-date">
+        <div class="clock">--:--:--</div>
+        <div class="date">-</div>
+      </div>
+    </div>
+  </div>
+
+  <svg class="circuit-divider" viewBox="0 0 1100 14" preserveAspectRatio="none">
+    <path d="M0,7 H1100"></path>
+    <circle cx="220" cy="7" r="3"></circle>
+    <circle cx="640" cy="7" r="3"></circle>
+    <circle cx="900" cy="7" r="3"></circle>
+  </svg>
+
+  <div class="container">
+    <nav class="main-nav">
+      <ul class="nav-links">
+        <li><a href="index.html" data-fa="خانه" data-en="Home">خانه</a></li>
+        <li><a href="services.html" data-fa="خدمات" data-en="Services">خدمات</a></li>
+        <li><a href="about.html" data-fa="درباره ما" data-en="About Us">درباره ما</a></li>
+        <li><a href="contact.html" data-fa="ارتباط با ما" data-en="Contact Us">ارتباط با ما</a></li>
+        <li><a href="gallery.html" data-fa="نمونه‌کار" data-en="Portfolio">نمونه‌کار</a></li>
+        <li><a href="animations.html" data-fa="انیمیشن‌ها" data-en="Animations">انیمیشن‌ها</a></li>
+        <li><a href="tools.html" class="active" data-fa="ابزارها" data-en="Tools">ابزارها</a></li>
+      </ul>
+      <button class="lang-toggle" type="button">
+        <span class="lang-toggle-label">English</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <a class="bc-back" href="qr.html" data-fa="بازگشت به انتخاب ابزار" data-en="Back to tool choice">بازگشت به انتخاب ابزار</a>
+  <p class="eyebrow" data-fa="ابزارها" data-en="Tools">ابزارها</p>
+  <h1 class="page-title" data-fa="ساخت بارکد" data-en="Barcode maker">ساخت بارکد</h1>
+  <p class="lead"
+     data-fa="نوع بارکد را انتخاب کنید، توضیح کاربردش را بخوانید و با یک کلیک بسازید. همه‌چیز روی دستگاه شما انجام می‌شود و چیزی ارسال نمی‌شود."
+     data-en="Choose the barcode type, read what it is used for and create it with one click. Everything runs on your device and nothing is uploaded.">
+     نوع بارکد را انتخاب کنید، توضیح کاربردش را بخوانید و با یک کلیک بسازید. همه‌چیز روی دستگاه شما انجام می‌شود و چیزی ارسال نمی‌شود.
+  </p>
+
+  <section class="qr-layout">
+    <div class="qr-panel" aria-labelledby="bcSettingsTitle">
+      <h2 class="qr-section-title" id="bcSettingsTitle" data-fa="نوع بارکد" data-en="Barcode type">نوع بارکد</h2>
+
+      <div class="qr-field">
+        <label class="qr-label" for="bcType" data-fa="یک نوع انتخاب کنید" data-en="Choose a type">یک نوع انتخاب کنید</label>
+        <select id="bcType">
+          <option value="" selected disabled data-fa="انتخاب کنید..." data-en="Choose...">انتخاب کنید...</option>
+          <option value="code128">Code128</option>
+          <option value="ean13">EAN-13</option>
+          <option value="ean8">EAN-8</option>
+          <option value="upca">UPC-A</option>
+          <option value="code39">Code39</option>
+        </select>
+      </div>
+
+      <div class="bc-info" id="bcInfo" hidden>
+        <h3 id="bcInfoTitle"></h3>
+        <p id="bcInfoUse"></p>
+        <p id="bcInfoRule"></p>
+        <p id="bcInfoEx"></p>
+        <button type="button" class="qr-btn" id="bcAccept" data-fa="قبول دارم، ادامه" data-en="Got it, continue">قبول دارم، ادامه</button>
+      </div>
+
+      <div id="bcStep2" hidden>
+        <div class="qr-field">
+          <label class="qr-label" for="bcValue" data-fa="کد" data-en="Code">کد</label>
+          <input id="bcValue" type="text" dir="ltr" autocomplete="off" spellcheck="false">
+          <p class="qr-hint" id="bcHint"></p>
+        </div>
+
+        <div class="qr-field">
+          <label class="qr-label" for="bcSize" data-fa="اندازه فایل خروجی" data-en="Output size">اندازه فایل خروجی</label>
+          <select id="bcSize">
+            <option value="512" data-fa="۵۱۲ پیکسل: وب و شبکه‌های اجتماعی" data-en="512 px: web and social media">۵۱۲ پیکسل: وب و شبکه‌های اجتماعی</option>
+            <option value="1024" selected data-fa="۱۰۲۴ پیکسل: پیشنهادی" data-en="1024 px: recommended">۱۰۲۴ پیکسل: پیشنهادی</option>
+            <option value="2048" data-fa="۲۰۴۸ پیکسل: چاپ" data-en="2048 px: print">۲۰۴۸ پیکسل: چاپ</option>
+          </select>
+        </div>
+
+        <div class="qr-field">
+          <div class="qr-row">
+            <div>
+              <label class="qr-label" for="bcFg" data-fa="رنگ بارکد" data-en="Barcode color">رنگ بارکد</label>
+              <input id="bcFg" type="color" value="#000000">
+            </div>
+            <div>
+              <label class="qr-label" for="bcBg" data-fa="رنگ زمینه" data-en="Background color">رنگ زمینه</label>
+              <input id="bcBg" type="color" value="#ffffff">
+            </div>
+          </div>
+          <p class="qr-hint" data-fa="برای اسکن راحت، بارکد تیره و زمینه روشن بگذارید." data-en="For easy scanning, use a dark barcode on a light background.">برای اسکن راحت، بارکد تیره و زمینه روشن بگذارید.</p>
+        </div>
+
+        <div class="qr-field">
+          <label class="qr-check"><input id="bcShowText" type="checkbox" checked> <span data-fa="نمایش عدد زیر بارکد" data-en="Show the number under the barcode">نمایش عدد زیر بارکد</span></label>
+        </div>
+
+        <div class="qr-btn-row">
+          <button type="button" class="qr-btn" id="bcMake" data-fa="ساخت بارکد" data-en="Create barcode">ساخت بارکد</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="qr-panel qr-stage" aria-label="Barcode">
+      <div class="qr-frame">
+        <canvas id="bcCanvas" role="img" aria-label="Barcode" style="max-width:100%;height:auto" hidden></canvas>
+        <div class="qr-empty" id="bcEmpty"></div>
+      </div>
+      <div class="qr-actions">
+        <button type="button" class="qr-btn" id="bcDlPng" disabled data-fa="دانلود PNG" data-en="Download PNG">دانلود PNG</button>
+        <button type="button" class="qr-btn ghost" id="bcDlSvg" disabled data-fa="دانلود SVG" data-en="Download SVG">دانلود SVG</button>
+      </div>
+      <p class="qr-msg" id="bcMsg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <svg class="circuit-divider container" viewBox="0 0 1100 14" preserveAspectRatio="none">
+    <path d="M0,7 H1100"></path>
+    <circle cx="350" cy="7" r="3"></circle>
+    <circle cx="760" cy="7" r="3"></circle>
+  </svg>
+  <p class="footer-credit" data-fa="طراحی توسط گروه مهندسین INFC.1405" data-en="Designed by INFC.1405 Engineering Team">
+    طراحی توسط <strong>گروه مهندسین INFC.1405</strong>
+  </p>
+  <p class="visit-counter">
+    <span data-fa="تعداد بازدید:" data-en="Visits:">تعداد بازدید:</span>
+    <span class="count">0</span>
+  </p>
+</footer>
+
+<script src="folders/js/main.js"></script>
+<script src="folders/js/barcode.js"></script>
+<script type="module" src="folders/js/auth.js"></script>
+</body>
+</html>
