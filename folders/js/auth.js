@@ -1,5 +1,5 @@
-/* INFC.1405 - عضویت و تاریخچه QR (Firebase) + تأیید ایمیل
-   کار می‌کند در: صفحه اول (عنصر #accountMount) و صفحه QR */
+/* INFC.1405 - عضویت و تاریخچه QR و بارکد (Firebase) + تأیید ایمیل
+   کار می‌کند در: صفحه اول (عنصر #accountMount)، صفحه ساخت QR و صفحه ساخت بارکد */
 const V = "10.14.1";
 const firebaseConfig = {
   apiKey: "AIzaSyCFOQ6bS5FrYoGmpuwjeN6y9Lk3T87SgiU",
@@ -39,6 +39,7 @@ const CSS = `
 .hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:14px}
 .hist-item{border:1px solid rgba(128,128,128,.4);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .hist-item img{width:100%;max-width:150px;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:8px;align-self:center}
+.hist-item img.bc{max-width:100%;aspect-ratio:auto}
 .hist-meta{font-size:.88em;opacity:.9;word-break:break-word}
 a.qr-btn{text-decoration:none;display:inline-block}
 `;
@@ -60,12 +61,17 @@ const ERR = {
 };
 const errText = (e) => ERR[(e && e.code) || ""] || ["خطایی رخ داد. دوباره امتحان کنید.", "Something went wrong. Please try again."];
 
+const BC_NAMES = { code128: "Code128", ean13: "EAN-13", ean8: "EAN-8", upca: "UPC-A", code39: "Code39" };
+
 async function main() {
   const mount = $("accountMount");            // صفحه اول
-  const layout = document.querySelector(".qr-layout"); // صفحه QR
-  const dlPng = $("qrDlPng");
+  const layout = document.querySelector(".qr-layout"); // صفحه QR یا بارکد
+  const isBc = !!$("bcDlPng");                // صفحه ساخت بارکد
+  const dlPng = $("qrDlPng") || $("bcDlPng");
+  const canvasEl = $("qrCanvas") || $("bcCanvas");
+  const typeEl = $("qrType") || $("bcType");
   if (!mount && !(layout && dlPng)) return;
-  const onQr = !mount && !!(layout && dlPng);
+  const onQr = !mount && !!(layout && dlPng); // یعنی صفحه‌ی ساخت QR یا بارکد
 
   document.head.append(h("style", null, CSS));
   const authBox = h("section", { class: "auth-wrap" });
@@ -187,16 +193,21 @@ async function main() {
     renderHistory();
   }
   async function delItem(id) {
-    if (!confirm(t("این QR از تاریخچه حذف شود؟", "Delete this QR from history?"))) return;
+    if (!confirm(t("این مورد از تاریخچه حذف شود؟", "Delete this item from history?"))) return;
     try { await fb.F.deleteDoc(fb.F.doc(fb.db, "users", S.user.uid, "qrs", id)); } catch (e) {}
     loadHistory();
   }
   function summaryOf(type) {
+    if (isBc) { const b = $("bcValue"); return b ? b.value.trim().slice(0, 120) : ""; }
     const ids = { url: "qrUrl", instagram: "qrIg", telegram: "qrTg", whatsapp: "qrPhone", phone: "qrPhone", email: "qrEmail", text: "qrText" };
     const el = $(ids[type]);
     return el ? el.value.trim().slice(0, 120) : "";
   }
   function typeLabel(type) {
+    if (typeof type === "string" && type.indexOf("barcode:") === 0) {
+      const k = type.slice(8);
+      return t("بارکد ", "Barcode ") + (BC_NAMES[k] || k);
+    }
     const o = document.querySelector('#qrType option[value="' + type + '"]');
     if (o) return o.getAttribute(isFa() ? "data-fa" : "data-en") || type;
     const names = {
@@ -214,22 +225,23 @@ async function main() {
       setNudge(["برای ذخیره در تاریخچه، ابتدا ایمیل خود را تأیید کنید.", "Verify your email to save to history."], "warn");
       return;
     }
-    const type = $("qrType").value;
-    if (type === "wifi") {
+    const kind = typeEl ? typeEl.value : "";
+    if (!isBc && kind === "wifi") {
       setNudge(["QR وای‌فای در تاریخچه ذخیره نمی‌شود، چون رمز داخل تصویر است.", "Wi-Fi QR codes are not saved to history because the image contains the password."], "warn");
       return;
     }
+    const type = isBc ? "barcode:" + kind : kind;
     let image;
-    try { image = $("qrCanvas").toDataURL("image/png"); } catch (e) { return; }
+    try { image = canvasEl.toDataURL("image/png"); } catch (e) { return; }
     if (image === lastSaved) return;
     if (image.length > 900000) {
-      setNudge(["این QR برای ذخیره در تاریخچه بزرگ است. اندازه‌ی خروجی را کمتر کنید.", "This QR is too large to save to history. Choose a smaller output size."], "warn");
+      setNudge(["این مورد برای ذخیره در تاریخچه بزرگ است. اندازه‌ی خروجی را کمتر کنید.", "This is too large to save to history. Choose a smaller output size."], "warn");
       return;
     }
     try {
       const F = fb.F;
       await F.addDoc(F.collection(fb.db, "users", S.user.uid, "qrs"),
-        { type, summary: summaryOf(type), image, createdAt: F.serverTimestamp() });
+        { type, summary: summaryOf(kind), image, createdAt: F.serverTimestamp() });
       lastSaved = image;
       setNudge(["در تاریخچه‌ی شما ذخیره شد.", "Saved to your history."], "ok");
       loadHistory();
@@ -249,7 +261,7 @@ async function main() {
     if (!S.ready) { add(h("p", { class: "qr-hint" }, t("در حال بررسی وضعیت ورود…", "Checking sign-in status…"))); return; }
     if (S.failed) {
       add(title("عضویت", "Membership"),
-        h("p", { class: "qr-hint" }, t("سرویس عضویت در دسترس نیست (ممکن است فیلترشکن لازم باشد). ساخت QR بدون عضویت کار می‌کند.", "The membership service is unreachable (a VPN may be needed). The QR maker still works without it.")));
+        h("p", { class: "qr-hint" }, t("سرویس عضویت در دسترس نیست (ممکن است فیلترشکن لازم باشد). ساخت QR و بارکد بدون عضویت کار می‌کند.", "The membership service is unreachable (a VPN may be needed). The QR and barcode makers still work without it.")));
       return;
     }
     if (S.user) {
@@ -258,7 +270,7 @@ async function main() {
       add(title("عضو سایت", "Site member"),
         h("p", { class: "qr-hint" }, t("وارد شده‌اید با: ", "Signed in as: "), h("bdi", null, S.user.displayName || S.user.email || "")),
         verified ? null : h("div", { class: "auth-nudge" },
-          h("p", null, t("ایمیل شما هنوز تأیید نشده است. لینک تأیید را در صندوق ایمیل (و پوشه‌ی اسپم) باز کنید. تا قبل از تأیید، تاریخچه‌ی QR ذخیره نمی‌شود.",
+          h("p", null, t("ایمیل شما هنوز تأیید نشده است. لینک تأیید را در صندوق ایمیل (و پوشه‌ی اسپم) باز کنید. تا قبل از تأیید، تاریخچه ذخیره نمی‌شود.",
                          "Your email is not verified yet. Open the link in your inbox (and spam folder). History is not saved until you verify.")),
           h("div", { class: "qr-btn-row" },
             h("button", { type: "button", class: "qr-btn", disabled: S.busy, onclick: doCheckVerified }, t("تأیید کردم", "I verified")),
@@ -270,7 +282,7 @@ async function main() {
       return;
     }
     add(title("عضویت در سایت (اختیاری)", "Join the site (optional)"),
-      h("p", { class: "qr-hint" }, t("ساخت QR بدون عضویت هم آزاد است. اعضا تاریخچه‌ی QRهای خود را می‌بینند و دوباره دانلود می‌کنند.", "Making QR codes is free without an account. Members see their QR history and can download again.")));
+      h("p", { class: "qr-hint" }, t("ساخت QR و بارکد بدون عضویت هم آزاد است. اعضا تاریخچه‌ی QR و بارکدهای خود را می‌بینند، دوباره دانلود می‌کنند و از ۵ درصد تخفیف خدمات فریلنسری استفاده می‌کنند.", "Making QR codes and barcodes is free without an account. Members see their QR and barcode history, can download again, and get 5% off freelance services.")));
     if (!S.open) {
       add(
         S.msg ? h("p", { class: "qr-msg" + (S.msg.kind === "err" ? " err" : ""), role: "status" }, t(S.msg.p[0], S.msg.p[1])) : null,
@@ -302,11 +314,12 @@ async function main() {
   }
   function item(it) {
     const safe = typeof it.image === "string" && it.image.indexOf("data:image/png;base64,") === 0;
+    const bc = typeof it.type === "string" && it.type.indexOf("barcode:") === 0;
     return h("div", { class: "hist-item" },
-      safe ? h("img", { src: it.image, alt: "QR" }) : null,
+      safe ? h("img", { src: it.image, alt: bc ? "Barcode" : "QR", class: bc ? "bc" : null }) : null,
       h("div", { class: "hist-meta" }, h("strong", null, typeLabel(it.type)), h("br"), h("bdi", null, it.summary || ""), h("br"), dateText(it.createdAt)),
       h("div", { class: "qr-btn-row" },
-        safe ? h("a", { class: "qr-btn", href: it.image, download: "qr-code.png" }, t("دانلود", "Download")) : null,
+        safe ? h("a", { class: "qr-btn", href: it.image, download: bc ? "barcode.png" : "qr-code.png" }, t("دانلود", "Download")) : null,
         h("button", { type: "button", class: "qr-btn ghost", onclick: () => delItem(it.id) }, t("حذف", "Delete"))));
   }
   function renderHistory() {
@@ -317,7 +330,7 @@ async function main() {
     if (S.history === null) { panel.append(h("p", { class: "qr-hint" }, t("در حال بارگذاری…", "Loading…"))); return; }
     if (S.histErr) { panel.append(h("p", { class: "qr-msg err" }, t("تاریخچه بارگذاری نشد.", "Could not load history."))); return; }
     if (!S.history.length) {
-      panel.append(h("p", { class: "qr-hint" }, t("هنوز QRای ذخیره نشده. هر بار در صفحه‌ی ساخت QR فایل PNG یا SVG دانلود کنید، خودکار اینجا ذخیره می‌شود.", "Nothing saved yet. Each time you download a PNG or SVG on the QR page, it is saved here automatically.")));
+      panel.append(h("p", { class: "qr-hint" }, t("هنوز چیزی ذخیره نشده. هر بار در صفحه‌ی ساخت QR یا بارکد فایل PNG یا SVG دانلود کنید، خودکار اینجا ذخیره می‌شود.", "Nothing saved yet. Each time you download a PNG or SVG on the QR or barcode page, it is saved here automatically.")));
       return;
     }
     panel.append(h("div", { class: "hist-grid" }, S.history.map(item)));
@@ -335,15 +348,15 @@ async function main() {
     if (!S.ready || S.failed || S.user || dlPng.disabled) return;
     nudge.hidden = false;
     nudge.append(
-      h("p", null, t("برای ذخیره‌ی تاریخچه‌ی QRها و دانلود دوباره، عضو سایت شوید.", "Join the site to keep your QR history and download it again.")),
+      h("p", null, t("برای ذخیره تاریخچه و استفاده از ۵ درصد تخفیف خدمات فریلنسری، عضو سایت شوید.", "Join the site to save your history and get 5% off freelance services.")),
       h("button", { type: "button", class: "qr-btn ghost", onclick: () => { S.open = true; renderAuth(); authBox.scrollIntoView({ behavior: "smooth", block: "start" }); } }, t("ورود / ثبت‌نام", "Sign in / Sign up")));
   }
   function render() { renderAuth(); renderHistory(); renderNudge(); }
 
-  /* ---------- اتصال به رویدادهای صفحه QR ---------- */
+  /* ---------- اتصال به رویدادهای صفحه QR و بارکد ---------- */
   if (onQr) {
     dlPng.addEventListener("click", saveCurrent);
-    const dlSvg = $("qrDlSvg");
+    const dlSvg = $("qrDlSvg") || $("bcDlSvg");
     if (dlSvg) dlSvg.addEventListener("click", saveCurrent);
     const clearNudge = () => { if (S.nudge) { S.nudge = null; renderNudge(); } };
     layout.addEventListener("input", clearNudge);
