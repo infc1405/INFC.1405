@@ -205,12 +205,16 @@ h1.page-title{
   margin:0 0 18px;
   line-height:1.25;
 }
-/* max-width removed: it left an empty area on the left of wide screens */
+/* max-width removed: it left an empty area on the left of wide screens.
+   Justified text keeps both edges straight (on phones the left edge was ragged). */
 p.lead{
   color:var(--text-muted);
   font-size:1.05rem;
   max-width:none;
   margin:0 0 8px;
+  text-align:justify;
+  text-justify:inter-word;
+  text-align-last:start;
 }
 .placeholder-note{
   display:inline-block;
@@ -404,6 +408,9 @@ form.contact-form button:hover{ opacity:.9; }
   margin:6px 0 0;
   font-size:.82rem;
   color:var(--text-muted);
+  text-align:justify;
+  text-justify:inter-word;
+  text-align-last:start;
 }
 .qr-section-title{
   font-family:var(--font-display);
