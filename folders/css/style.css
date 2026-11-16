@@ -105,13 +105,11 @@ html[lang="en"] .brand-name-block{ direction:ltr; text-align:left; }
   text-transform:uppercase;
   color:var(--text-muted);
 }
-
-.brand-logo-block{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  min-width:120px;
+.brand-logo-block img{
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  clip-path:circle(48.5%);
 }
 .brand-logo-block img{
   width:76px;
