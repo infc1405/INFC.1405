@@ -109,13 +109,7 @@ html[lang="en"] .brand-name-block{ direction:ltr; text-align:left; }
   width:76px;
   height:76px;
   border-radius:50%;
-  clip-path:circle(48.5%);
-}
-.brand-logo-block img{
-  width:76px;
-  height:76px;
-  border-radius:20px;
-  box-shadow:0 0 0 1px var(--card-border), 0 0 24px rgba(45,212,191,.25);
+  clip-path:circle(50%);
 }
 
 /* Clock + date sit directly beneath the logo */
