@@ -110,6 +110,7 @@ html[lang="en"] .brand-name-block{ direction:ltr; text-align:left; }
   height:76px;
   border-radius:50%;
   clip-path:circle(50%);
+   margin-bottom:16px;
 }
 
 /* Clock + date sit directly beneath the logo */
