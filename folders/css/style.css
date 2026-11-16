@@ -81,6 +81,9 @@ header.site-header{
   justify-content:space-between;
   gap:20px;
   flex-wrap:wrap;
+   html[lang="fa"] .brand-row{
+  direction:rtl;
+   }
 }
 .brand-name-block{
   direction:inherit;
