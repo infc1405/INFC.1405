@@ -72,24 +72,23 @@ img{max-width:100%;display:block;}
 header.site-header{
   padding-top:28px;
 }
-/* Brand row order is fixed regardless of language:
-   name always starts the row, logo always ends it. */
+
+/* Header layout is FIXED in every language:
+   logo on the left, brand name in the middle, clock + date on the right. */
 .brand-row{
   direction:ltr;
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  grid-template-areas:"logo name clock";
+  align-items:center;
   gap:20px;
-  flex-wrap:wrap;
-   html[lang="fa"] .brand-row{
-  direction:rtl;
-   }
 }
 .brand-name-block{
-  direction:inherit;
+  grid-area:name;
+  text-align:center;
 }
-html[lang="fa"] .brand-name-block{ direction:rtl; text-align:right; }
-html[lang="en"] .brand-name-block{ direction:ltr; text-align:left; }
+html[lang="fa"] .brand-name-block{ direction:rtl; text-align:center; }
+html[lang="en"] .brand-name-block{ direction:ltr; text-align:center; }
 
 .brand-name{
   font-family:var(--font-display);
@@ -108,16 +107,25 @@ html[lang="en"] .brand-name-block{ direction:ltr; text-align:left; }
   text-transform:uppercase;
   color:var(--text-muted);
 }
+
+/* The wrapper is dissolved so the logo and the clock can be placed
+   independently inside .brand-row (logo left, clock right). */
+.brand-logo-block{
+  display:contents;
+}
 .brand-logo-block img{
+  grid-area:logo;
+  justify-self:start;
   width:76px;
   height:76px;
   border-radius:50%;
   clip-path:circle(50%);
-   margin-bottom:16px;
 }
 
-/* Clock + date sit directly beneath the logo */
+/* Clock + date: always on the right */
 .clock-date{
+  grid-area:clock;
+  justify-self:end;
   font-family:var(--font-mono);
   text-align:center;
   background:var(--card-bg);
@@ -186,6 +194,18 @@ nav.main-nav{
 /* ================= MAIN ================= */
 main{ padding:56px 0 40px; }
 
+/* ---------- Justified text (both edges aligned) ---------- */
+main p,
+main li,
+.card,
+.card p,
+.contact-list .card span,
+.placeholder-note{
+  text-align:justify;
+  text-justify:inter-word;
+  text-align-last:start;
+}
+
 .eyebrow{
   font-family:var(--font-mono);
   font-size:.72rem;
@@ -201,8 +221,6 @@ h1.page-title{
   margin:0 0 18px;
   line-height:1.25;
 }
-/* max-width removed: it left an empty area on the left of wide screens.
-   Justified text keeps both edges straight (on phones the left edge was ragged). */
 p.lead{
   color:var(--text-muted);
   font-size:1.05rem;
@@ -585,7 +603,14 @@ footer.site-footer{
 .visit-counter span{ color:var(--teal); font-weight:700; }
 
 @media (max-width:600px){
-  .brand-row{ align-items:center; }
+  /* Phone: name on top (centered), logo left + clock right underneath */
+  .brand-row{
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "name name"
+      "logo clock";
+    row-gap:16px;
+  }
   /* seven nav items wrap to two rows on phones: a full pill looks odd, so soften the shape */
   .nav-links{ border-radius:22px; justify-content:center; }
   .qr-panel{ padding:20px; }
