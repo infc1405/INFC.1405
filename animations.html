@@ -33,6 +33,78 @@
   }
   .anim-card .run:hover{ opacity:.9; }
   .anim-card .run:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+
+  /* کارت چراغ راهنمایی */
+  .tl-card{
+    display:flex;
+    flex-wrap:wrap;
+    gap:28px;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .tl-light{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    padding:16px;
+    background:#0b1118;
+    border-radius:28px;
+    border:2px solid rgba(255,255,255,.08);
+  }
+  .tl-lamp{
+    width:72px;
+    height:72px;
+    border-radius:50%;
+    background:#252c34;
+    transition:background .25s, box-shadow .25s;
+  }
+  .tl-lamp.on.red{ background:#ef4444; box-shadow:0 0 36px #ef4444; }
+  .tl-lamp.on.orange{ background:#f59e0b; box-shadow:0 0 36px #f59e0b; }
+  .tl-lamp.on.green{ background:#22c55e; box-shadow:0 0 36px #22c55e; }
+  .tl-panel{ flex:1 1 260px; max-width:420px; }
+  .tl-now{ font-size:1.2rem; font-weight:700; }
+  .tl-count{ font-size:2.6rem; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.2; }
+  .tl-fields{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    margin:16px 0;
+  }
+  .tl-fields label{ display:flex; flex-direction:column; gap:6px; font-size:.9rem; }
+  .tl-fields input{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(4,12,28,.45);
+    color:inherit;
+    font:inherit;
+  }
+  .tl-fields input:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+  .tl-dot{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    margin-inline-end:6px;
+  }
+  .tl-reset{
+    padding:8px 16px;
+    border-radius:10px;
+    border:1px solid var(--teal);
+    background:transparent;
+    color:var(--teal);
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .tl-reset:hover{ background:var(--teal); color:#04241f; }
+  .tl-reset:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+  @media (prefers-reduced-motion: reduce){
+    .tl-lamp{ transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -114,6 +186,47 @@
       </article>
 
     </div>
+  </section>
+
+  <!-- چراغ راهنمایی: زیر کارت روز دانش‌آموز، با زمان‌های قابل تغییر -->
+  <section class="section">
+    <article class="card tl-card">
+      <div class="tl-light" aria-hidden="true">
+        <div class="tl-lamp red" id="tl-red"></div>
+        <div class="tl-lamp orange" id="tl-orange"></div>
+        <div class="tl-lamp green" id="tl-green"></div>
+      </div>
+
+      <div class="tl-panel">
+        <h3 data-fa="چراغ راهنمایی" data-en="Traffic light">چراغ راهنمایی</h3>
+        <p data-fa="زمان هر رنگ را به ثانیه تغییر بده. با هر تغییر، چراغ دوباره از سبز شروع می‌شود."
+           data-en="Change each color's time in seconds. Any change restarts the light from green.">زمان هر رنگ را به ثانیه تغییر بده. با هر تغییر، چراغ دوباره از سبز شروع می‌شود.</p>
+
+        <div class="tl-fields">
+          <label for="tl-in-green">
+            <span><span class="tl-dot" style="background:#22c55e"></span><span data-fa="سبز" data-en="Green">سبز</span></span>
+            <input type="number" id="tl-in-green" min="1" max="600" step="1" value="30" inputmode="numeric">
+          </label>
+          <label for="tl-in-orange">
+            <span><span class="tl-dot" style="background:#f59e0b"></span><span data-fa="نارنجی" data-en="Orange">نارنجی</span></span>
+            <input type="number" id="tl-in-orange" min="1" max="600" step="1" value="3" inputmode="numeric">
+          </label>
+          <label for="tl-in-red">
+            <span><span class="tl-dot" style="background:#ef4444"></span><span data-fa="قرمز" data-en="Red">قرمز</span></span>
+            <input type="number" id="tl-in-red" min="1" max="600" step="1" value="27" inputmode="numeric">
+          </label>
+        </div>
+
+        <div class="tl-now" role="status">
+          <span class="tl-name" data-key="green" data-fa="سبز" data-en="Green">سبز</span>
+          <span class="tl-name" data-key="orange" data-fa="نارنجی" data-en="Orange" hidden>نارنجی</span>
+          <span class="tl-name" data-key="red" data-fa="قرمز" data-en="Red" hidden>قرمز</span>
+        </div>
+        <div class="tl-count" id="tl-count">30</div>
+
+        <button class="tl-reset" type="button" id="tl-reset" data-fa="بازگشت به زمان‌های پیش‌فرض" data-en="Restore default times">بازگشت به زمان‌های پیش‌فرض</button>
+      </div>
+    </article>
   </section>
 </main>
 
@@ -230,6 +343,89 @@
     });
     ctx.shadowBlur = 0;
   });
+})();
+</script>
+
+<script>
+/* چراغ راهنمایی با زمان‌های قابل تغییر */
+(function () {
+  var ORDER = ['green', 'orange', 'red'];
+  var DEFAULTS = { green: 30, orange: 3, red: 27 };
+  var MAX_SECONDS = 600;
+
+  var durations = { green: DEFAULTS.green, orange: DEFAULTS.orange, red: DEFAULTS.red };
+  var lamps = {}, inputs = {}, names = {};
+  var countEl = document.getElementById('tl-count');
+  var start = Date.now();
+
+  ORDER.forEach(function (k) {
+    lamps[k] = document.getElementById('tl-' + k);
+    inputs[k] = document.getElementById('tl-in-' + k);
+  });
+  document.querySelectorAll('.tl-name').forEach(function (el) {
+    names[el.getAttribute('data-key')] = el;
+  });
+
+  function isEnglish() {
+    var d = document.documentElement;
+    return d.lang === 'en' || d.dir === 'ltr';
+  }
+  function formatNumber(n) {
+    if (isEnglish()) return String(n);
+    return String(n).replace(/\d/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.charAt(d); });
+  }
+
+  function tick() {
+    var cycle = durations.green + durations.orange + durations.red;
+    // بر اساس زمان واقعی محاسبه می‌شود تا با غیرفعال‌بودن تب عقب نیفتد
+    var t = ((Date.now() - start) / 1000) % cycle;
+    var acc = 0;
+    for (var i = 0; i < ORDER.length; i++) {
+      var key = ORDER[i];
+      if (t < acc + durations[key]) {
+        ORDER.forEach(function (k) {
+          lamps[k].classList.toggle('on', k === key);
+          if (names[k]) names[k].hidden = (k !== key);
+        });
+        countEl.textContent = formatNumber(Math.ceil(acc + durations[key] - t));
+        return;
+      }
+      acc += durations[key];
+    }
+  }
+
+  function applyInputs() {
+    var changed = false;
+    ORDER.forEach(function (k) {
+      var v = parseInt(inputs[k].value, 10);
+      if (v >= 1 && v <= MAX_SECONDS && v !== durations[k]) {
+        durations[k] = v;
+        changed = true;
+      }
+    });
+    if (changed) {
+      start = Date.now();
+      tick();
+    }
+  }
+
+  ORDER.forEach(function (k) {
+    inputs[k].addEventListener('input', applyInputs);
+    // اگر خالی یا نامعتبر رها شد، به آخرین مقدار معتبر برگردد
+    inputs[k].addEventListener('blur', function () { inputs[k].value = durations[k]; });
+  });
+
+  document.getElementById('tl-reset').addEventListener('click', function () {
+    ORDER.forEach(function (k) {
+      durations[k] = DEFAULTS[k];
+      inputs[k].value = DEFAULTS[k];
+    });
+    start = Date.now();
+    tick();
+  });
+
+  tick();
+  setInterval(tick, 200);
 })();
 </script>
 <script src="folders/js/main.js"></script>
