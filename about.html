@@ -3,11 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>درباره ما | INFC.1405</title>
+<title>انیمیشن‌ها | گروه فریلنسری INFC.1405</title>
 <link rel="icon" href="folders/assets/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="folders/css/style.css">
+<style>
+  /* فقط مخصوص کارت‌های انیمیشن */
+  .anim-card{ display:flex; flex-direction:column; padding:16px; }
+  .anim-card .thumb{
+    width:100%;
+    aspect-ratio:1 / 1;
+    display:block;
+    border-radius:12px;
+    background:rgba(4,12,28,.45);
+    margin-bottom:16px;
+  }
+  .anim-card p{ flex:1; }
+  .anim-card .run{
+    margin-top:16px;
+    display:block;
+    text-align:center;
+    padding:10px 0;
+    border-radius:10px;
+    background:var(--teal);
+    color:#04241f;
+    font-weight:700;
+    transition:.2s;
+  }
+  .anim-card .run:hover{ opacity:.9; }
+  .anim-card .run:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+
+  /* کارت چراغ راهنمایی */
+  .tl-card{
+    display:flex;
+    flex-wrap:wrap;
+    gap:28px;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .tl-light{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    padding:16px;
+    background:#0b1118;
+    border-radius:28px;
+    border:2px solid rgba(255,255,255,.08);
+  }
+  .tl-lamp{
+    width:72px;
+    height:72px;
+    border-radius:50%;
+    background:#252c34;
+    transition:background .25s, box-shadow .25s;
+  }
+  .tl-lamp.on.red{ background:#ef4444; box-shadow:0 0 36px #ef4444; }
+  .tl-lamp.on.orange{ background:#f59e0b; box-shadow:0 0 36px #f59e0b; }
+  .tl-lamp.on.green{ background:#22c55e; box-shadow:0 0 36px #22c55e; }
+  .tl-panel{ flex:1 1 260px; max-width:420px; }
+  .tl-now{ font-size:1.2rem; font-weight:700; }
+  .tl-count{ font-size:2.6rem; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.2; }
+  .tl-fields{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    margin:16px 0;
+  }
+  .tl-fields label{ display:flex; flex-direction:column; gap:6px; font-size:.9rem; }
+  .tl-fields input{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(4,12,28,.45);
+    color:inherit;
+    font:inherit;
+  }
+  .tl-fields input:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+  .tl-dot{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    margin-inline-end:6px;
+  }
+  .tl-reset{
+    padding:8px 16px;
+    border-radius:10px;
+    border:1px solid var(--teal);
+    background:transparent;
+    color:var(--teal);
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .tl-reset:hover{ background:var(--teal); color:#04241f; }
+  .tl-reset:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+  @media (prefers-reduced-motion: reduce){
+    .tl-lamp{ transition:none; }
+  }
+</style>
 </head>
 <body>
 
@@ -38,11 +136,11 @@
       <ul class="nav-links">
         <li><a href="index.html" data-fa="خانه" data-en="Home">خانه</a></li>
         <li><a href="services.html" data-fa="خدمات" data-en="Services">خدمات</a></li>
-        <li><a href="about.html" class="active" data-fa="درباره ما" data-en="About Us">درباره ما</a></li>
+        <li><a href="about.html" data-fa="درباره ما" data-en="About Us">درباره ما</a></li>
         <li><a href="contact.html" data-fa="ارتباط با ما" data-en="Contact Us">ارتباط با ما</a></li>
         <li><a href="gallery.html" data-fa="نمونه‌کار" data-en="Portfolio">نمونه‌کار</a></li>
-        <li><a href="animations.html" data-fa="انیمیشن‌ها" data-en="Animations">انیمیشن‌ها</a></li>
-     <li><a href="tools.html" data-fa="ابزارها" data-en="Tools">ابزارها</a></li>
+        <li><a href="animations.html" class="active" data-fa="انیمیشن‌ها" data-en="Animations">انیمیشن‌ها</a></li>
+    <li><a href="tools.html" data-fa="ابزارها" data-en="Tools">ابزارها</a></li>
       </ul>
       <button class="lang-toggle" type="button">
         <span class="lang-toggle-label">English</span>
@@ -52,44 +150,83 @@
 </header>
 
 <main class="container">
-  <p class="eyebrow" data-fa="درباره ما" data-en="About Us">درباره ما</p>
-  <h1 class="page-title" data-fa="گروه مهندسین INFC.1405" data-en="INFC.1405 Engineering Team">گروه مهندسین INFC.1405</h1>
-  <p class="lead" data-fa="گروه مهندسین INFC.1405 با مدیریت مهندس ایرج نظری، مجموعه‌ای تخصصی و پویا در حوزه خدمات فریلنسری است که با هدف ارائه راهکارهای حرفه‌ای، خلاقانه و مقرون‌به‌صرفه به افراد، کسب‌وکارها و سازمان‌ها فعالیت می‌کند. ما با بهره‌گیری از دانش فنی، تجربه عملی و تعهد به کیفیت، تلاش می‌کنیم نیازهای مشتریان را در کوتاه‌ترین زمان ممکن و با بالاترین سطح استاندارد برآورده سازیم."
-     data-en="INFC.1405 Engineering Team, led by Eng. Iraj Nazari, is a specialized, dynamic group in the field of freelance services, working to provide professional, creative, and cost-effective solutions to individuals, businesses, and organizations. Drawing on technical knowledge, hands-on experience, and a commitment to quality, we strive to meet our clients' needs in the shortest possible time and at the highest standard.">
-     گروه مهندسین INFC.1405 با مدیریت مهندس ایرج نظری، مجموعه‌ای تخصصی و پویا در حوزه خدمات فریلنسری است که با هدف ارائه راهکارهای حرفه‌ای، خلاقانه و مقرون‌به‌صرفه به افراد، کسب‌وکارها و سازمان‌ها فعالیت می‌کند. ما با بهره‌گیری از دانش فنی، تجربه عملی و تعهد به کیفیت، تلاش می‌کنیم نیازهای مشتریان را در کوتاه‌ترین زمان ممکن و با بالاترین سطح استاندارد برآورده سازیم.
-  </p>
-  <p class="lead" data-fa="فعالیت‌های ما طیف گسترده‌ای از خدمات دیجیتال و محتوایی را شامل می‌شود؛ از طراحی صفحات وب و تولید محتوای تخصصی گرفته تا طراحی و ساخت ارائه‌های حرفه‌ای (PowerPoint)، ترجمه و خلاصه‌نویسی مقالات، مقاله‌نویسی، مهندسی پرامپت و طراحی محتوای شبکه‌های اجتماعی."
-     data-en="Our work spans a wide range of digital and content services — from web design and specialized content production to professional PowerPoint presentation design, article translation and summarization, article writing, prompt engineering, and social media content design.">
-     فعالیت‌های ما طیف گسترده‌ای از خدمات دیجیتال و محتوایی را شامل می‌شود؛ از طراحی صفحات وب و تولید محتوای تخصصی گرفته تا طراحی و ساخت ارائه‌های حرفه‌ای (PowerPoint)، ترجمه و خلاصه‌نویسی مقالات، مقاله‌نویسی، مهندسی پرامپت و طراحی محتوای شبکه‌های اجتماعی.
-  </p>
-  <p class="lead" data-fa="در INFC.1405 باور داریم که موفقیت مشتریان، موفقیت ماست. به همین دلیل، اصولی همچون کیفیت، دقت، خلاقیت، رعایت زمان‌بندی و پشتیبانی مستمر را سرلوحه فعالیت‌های خود قرار داده‌ایم. هدف ما ایجاد همکاری‌های بلندمدت و ارائه خدماتی است که علاوه بر رفع نیازهای فعلی، به رشد و توسعه کسب‌وکار مشتریان نیز کمک کند."
-     data-en="At INFC.1405, we believe our clients' success is our success. That's why we place quality, precision, creativity, timely delivery, and ongoing support at the heart of everything we do. Our goal is to build long-term partnerships and deliver services that not only meet current needs but also help grow and develop our clients' businesses.">
-     در INFC.1405 باور داریم که موفقیت مشتریان، موفقیت ماست. به همین دلیل، اصولی همچون کیفیت، دقت، خلاقیت، رعایت زمان‌بندی و پشتیبانی مستمر را سرلوحه فعالیت‌های خود قرار داده‌ایم. هدف ما ایجاد همکاری‌های بلندمدت و ارائه خدماتی است که علاوه بر رفع نیازهای فعلی، به رشد و توسعه کسب‌وکار مشتریان نیز کمک کند.
+  <p class="eyebrow" data-fa="انیمیشن‌ها" data-en="Animations">انیمیشن‌ها</p>
+  <h1 class="page-title" data-fa="انیمیشن‌های ریاضی با کد" data-en="Math animations in code">انیمیشن‌های ریاضی با کد</h1>
+  <p class="lead" data-fa="روی دکمه‌ی «اجرا» بزن تا انیمیشن در صفحه‌ی خودش باز بشه."
+     data-en="Press Run to open the animation on its own page.">
+     روی دکمه‌ی «اجرا» بزن تا انیمیشن در صفحه‌ی خودش باز بشه.
   </p>
 
   <section class="section">
-    <h2 class="section-title" data-fa="چرا INFC.1405؟" data-en="Why INFC.1405?">چرا INFC.1405؟</h2>
     <div class="grid">
-      <div class="card">
-        <p data-fa="ارائه خدمات با کیفیت و استاندارد حرفه‌ای" data-en="High-quality service delivered to professional standards">ارائه خدمات با کیفیت و استاندارد حرفه‌ای</p>
-      </div>
-      <div class="card">
-        <p data-fa="تحویل پروژه‌ها در کوتاه‌ترین زمان ممکن" data-en="Project delivery in the shortest possible time">تحویل پروژه‌ها در کوتاه‌ترین زمان ممکن</p>
-      </div>
-      <div class="card">
-        <p data-fa="قیمت‌گذاری منصفانه و رقابتی" data-en="Fair, competitive pricing">قیمت‌گذاری منصفانه و رقابتی</p>
-      </div>
-      <div class="card">
-        <p data-fa="پشتیبانی و ارتباط مؤثر با مشتریان" data-en="Effective support and communication with clients">پشتیبانی و ارتباط مؤثر با مشتریان</p>
-      </div>
-      <div class="card">
-        <p data-fa="بهره‌گیری از دانش روز و فناوری‌های نوین" data-en="Use of up-to-date knowledge and modern technologies">بهره‌گیری از دانش روز و فناوری‌های نوین</p>
-      </div>
+
+      <!-- برای کارت جدید، یک بلوک article کامل را کپی کن و عنوان، توضیح و لینک را عوض کن -->
+      <article class="card anim-card">
+        <canvas class="thumb" data-shape="butterfly" role="img" aria-label="Butterfly"></canvas>
+        <h3 data-fa="پروانه" data-en="Butterfly">پروانه</h3>
+        <p data-fa="منحنی پروانه با نقطه‌ها و مسیرهای نئونی که کم‌کم کشیده می‌شود."
+           data-en="A butterfly curve drawn step by step with neon dots and trails.">منحنی پروانه با نقطه‌ها و مسیرهای نئونی که کم‌کم کشیده می‌شود.</p>
+        <a class="run" href="folders/animations/butterfly.html" data-fa="اجرا" data-en="Run">اجرا</a>
+      </article>
+
+      <article class="card anim-card">
+        <canvas class="thumb" data-shape="rose" role="img" aria-label="Rose"></canvas>
+        <h3 data-fa="گل" data-en="Rose">گل</h3>
+        <p data-fa="منحنی گل با گلبرگ‌های رنگی که روی هم می‌افتند."
+           data-en="A rose curve with colorful petals layering over each other.">منحنی گل با گلبرگ‌های رنگی که روی هم می‌افتند.</p>
+        <a class="run" href="folders/animations/rose.html" data-fa="اجرا" data-en="Run">اجرا</a>
+      </article>
+
+      <article class="card anim-card">
+        <canvas class="thumb" data-shape="student" role="img" aria-label="Student Day"></canvas>
+        <h3 data-fa="روز دانش‌آموز" data-en="Student Day">روز دانش‌آموز</h3>
+        <p data-fa="تبریک ۱۳ آبان؛ از یک نقطه، کلاه فارغ‌التحصیلی و کتاب روی دفتر خط‌دار کشیده می‌شود."
+           data-en="A 13 Aban greeting: from a single point, a graduation cap and book are drawn on ruled notebook paper.">تبریک ۱۳ آبان؛ از یک نقطه، کلاه فارغ‌التحصیلی و کتاب روی دفتر خط‌دار کشیده می‌شود.</p>
+        <a class="run" href="folders/animations/student-day.html" data-fa="اجرا" data-en="Run">اجرا</a>
+      </article>
+
     </div>
-    <p class="lead" style="margin-top:24px" data-fa="ما در گروه مهندسین INFC.1405 همواره آماده‌ایم تا ایده‌های شما را به بهترین شکل ممکن به واقعیت تبدیل کنیم و همراهی مطمئن در مسیر موفقیت دیجیتال شما باشیم."
-       data-en="At INFC.1405 Engineering Team, we're always ready to turn your ideas into reality in the best possible way and to be a reliable partner on your path to digital success.">
-       ما در گروه مهندسین INFC.1405 همواره آماده‌ایم تا ایده‌های شما را به بهترین شکل ممکن به واقعیت تبدیل کنیم و همراهی مطمئن در مسیر موفقیت دیجیتال شما باشیم.
-    </p>
+  </section>
+
+  <!-- چراغ راهنمایی: زیر کارت روز دانش‌آموز، با زمان‌های قابل تغییر -->
+  <section class="section">
+    <article class="card tl-card">
+      <div class="tl-light" aria-hidden="true">
+        <div class="tl-lamp red" id="tl-red"></div>
+        <div class="tl-lamp orange" id="tl-orange"></div>
+        <div class="tl-lamp green" id="tl-green"></div>
+      </div>
+
+      <div class="tl-panel">
+        <h3 data-fa="چراغ راهنمایی" data-en="Traffic light">چراغ راهنمایی</h3>
+        <p data-fa="زمان هر رنگ را به ثانیه تغییر بده. با هر تغییر، چراغ دوباره از سبز شروع می‌شود."
+           data-en="Change each color's time in seconds. Any change restarts the light from green.">زمان هر رنگ را به ثانیه تغییر بده. با هر تغییر، چراغ دوباره از سبز شروع می‌شود.</p>
+
+        <div class="tl-fields">
+          <label for="tl-in-green">
+            <span><span class="tl-dot" style="background:#22c55e"></span><span data-fa="سبز" data-en="Green">سبز</span></span>
+            <input type="number" id="tl-in-green" min="1" max="600" step="1" value="30" inputmode="numeric">
+          </label>
+          <label for="tl-in-orange">
+            <span><span class="tl-dot" style="background:#f59e0b"></span><span data-fa="نارنجی" data-en="Orange">نارنجی</span></span>
+            <input type="number" id="tl-in-orange" min="1" max="600" step="1" value="3" inputmode="numeric">
+          </label>
+          <label for="tl-in-red">
+            <span><span class="tl-dot" style="background:#ef4444"></span><span data-fa="قرمز" data-en="Red">قرمز</span></span>
+            <input type="number" id="tl-in-red" min="1" max="600" step="1" value="27" inputmode="numeric">
+          </label>
+        </div>
+
+        <div class="tl-now" role="status">
+          <span class="tl-name" data-key="green" data-fa="سبز" data-en="Green">سبز</span>
+          <span class="tl-name" data-key="orange" data-fa="نارنجی" data-en="Orange" hidden>نارنجی</span>
+          <span class="tl-name" data-key="red" data-fa="قرمز" data-en="Red" hidden>قرمز</span>
+        </div>
+        <div class="tl-count" id="tl-count">30</div>
+
+        <button class="tl-reset" type="button" id="tl-reset" data-fa="بازگشت به زمان‌های پیش‌فرض" data-en="Restore default times">بازگشت به زمان‌های پیش‌فرض</button>
+      </div>
+    </article>
   </section>
 </main>
 
@@ -108,6 +245,189 @@
   </p>
 </footer>
 
+<script>
+/* پیش‌نمایش نئونی کارت‌ها */
+(function () {
+  var N = 700;
+  var SHAPES = {
+    butterfly: { scale: 0.088, pt: function (a) {
+      var r = Math.exp(Math.cos(a)) - 2 * Math.cos(4 * a) - Math.pow(Math.sin(a / 12), 5);
+      return [r * Math.sin(a), r * Math.cos(a)];
+    }},
+    rose: { scale: 0.42, pt: function (a) {
+      var r = Math.cos((7 * a) / 3);
+      return [r * Math.cos(a), r * Math.sin(a)];
+    }}
+  };
+
+  document.querySelectorAll('canvas.thumb[data-shape]').forEach(function (canvas) {
+    var s = SHAPES[canvas.getAttribute('data-shape')];
+    if (!s) return;
+    var size = 360;
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    var S = size * s.scale;
+    var c = size / 2;
+    for (var i = 1; i <= N; i++) {
+      var a = (i / N) * 12 * Math.PI;
+      var p = s.pt(a);
+      var h = (i / N) * 360;
+      ctx.strokeStyle = 'hsla(' + h + ',100%,60%,0.07)';
+      ctx.beginPath();
+      ctx.moveTo(c, c);
+      ctx.lineTo(c + S * p[0], c - S * p[1]);
+      ctx.stroke();
+      ctx.shadowColor = 'hsl(' + h + ',100%,60%)';
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = 'hsl(' + h + ',100%,62%)';
+      ctx.beginPath();
+      ctx.arc(c + S * p[0], c - S * p[1], 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  });
+
+  /* پیش‌نمایش کارت روز دانش‌آموز: کلاه و کتاب نئونی */
+  document.querySelectorAll('canvas.thumb[data-shape="student"]').forEach(function (canvas) {
+    var size = 360;
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    var S = size * 0.36, cx = size / 2, cy = size * 0.47;
+
+    // دفتر خط‌دار
+    ctx.strokeStyle = 'rgba(45,212,191,.12)';
+    ctx.lineWidth = 1;
+    for (var y = 24; y < size; y += 24) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size, y); ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(255,110,140,.3)';
+    ctx.beginPath(); ctx.moveTo(size - 30, 0); ctx.lineTo(size - 30, size); ctx.stroke();
+
+    function chaikin(p, n) {
+      for (var k = 0; k < n; k++) {
+        var q = [p[0]];
+        for (var i = 0; i < p.length - 1; i++) {
+          var a = p[i], b = p[i + 1];
+          q.push([.75 * a[0] + .25 * b[0], .75 * a[1] + .25 * b[1]], [.25 * a[0] + .75 * b[0], .25 * a[1] + .75 * b[1]]);
+        }
+        q.push(p[p.length - 1]);
+        p = q;
+      }
+      return p;
+    }
+    var shapes = [
+      [[[-1,-0.55],[0,-0.85],[1,-0.55],[0,-0.25],[-1,-0.55]], false],
+      [[[-0.52,-0.40],[-0.52,-0.12],[-0.35,0],[0,0.06],[0.35,0],[0.52,-0.12],[0.52,-0.40]], true],
+      [[[0.85,-0.60],[0.85,-0.14],[0.80,-0.08],[0.85,0],[0.90,-0.08],[0.85,-0.14]], true],
+      [[[0,0.42],[-0.3,0.33],[-0.65,0.33],[-0.95,0.42],[-0.95,0.92],[-0.65,0.84],[-0.3,0.84],[0,0.92],[0,0.42]], true],
+      [[[0,0.42],[0.3,0.33],[0.65,0.33],[0.95,0.42],[0.95,0.92],[0.65,0.84],[0.3,0.84],[0,0.92]], true],
+      [[[-0.78,0.53],[-0.2,0.51]], false], [[[-0.78,0.64],[-0.2,0.62]], false], [[[-0.78,0.75],[-0.2,0.73]], false],
+      [[[0.2,0.51],[0.78,0.53]], false], [[[0.2,0.62],[0.78,0.64]], false], [[[0.2,0.73],[0.78,0.75]], false]
+    ];
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3;
+    shapes.forEach(function (sh, idx) {
+      var pts = sh[1] ? chaikin(sh[0], 2) : sh[0];
+      var h = (170 + (idx / shapes.length) * 300) % 360;
+      ctx.strokeStyle = 'hsl(' + h + ',100%,64%)';
+      ctx.shadowColor = 'hsl(' + h + ',100%,60%)';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      pts.forEach(function (p, i) {
+        if (i === 0) ctx.moveTo(cx + p[0] * S, cy + p[1] * S); else ctx.lineTo(cx + p[0] * S, cy + p[1] * S);
+      });
+      ctx.stroke();
+    });
+    ctx.shadowBlur = 0;
+  });
+})();
+</script>
+
+<script>
+/* چراغ راهنمایی با زمان‌های قابل تغییر */
+(function () {
+  var ORDER = ['green', 'orange', 'red'];
+  var DEFAULTS = { green: 30, orange: 3, red: 27 };
+  var MAX_SECONDS = 600;
+
+  var durations = { green: DEFAULTS.green, orange: DEFAULTS.orange, red: DEFAULTS.red };
+  var lamps = {}, inputs = {}, names = {};
+  var countEl = document.getElementById('tl-count');
+  var start = Date.now();
+
+  ORDER.forEach(function (k) {
+    lamps[k] = document.getElementById('tl-' + k);
+    inputs[k] = document.getElementById('tl-in-' + k);
+  });
+  document.querySelectorAll('.tl-name').forEach(function (el) {
+    names[el.getAttribute('data-key')] = el;
+  });
+
+  function isEnglish() {
+    var d = document.documentElement;
+    return d.lang === 'en' || d.dir === 'ltr';
+  }
+  function formatNumber(n) {
+    if (isEnglish()) return String(n);
+    return String(n).replace(/\d/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.charAt(d); });
+  }
+
+  function tick() {
+    var cycle = durations.green + durations.orange + durations.red;
+    // بر اساس زمان واقعی محاسبه می‌شود تا با غیرفعال‌بودن تب عقب نیفتد
+    var t = ((Date.now() - start) / 1000) % cycle;
+    var acc = 0;
+    for (var i = 0; i < ORDER.length; i++) {
+      var key = ORDER[i];
+      if (t < acc + durations[key]) {
+        ORDER.forEach(function (k) {
+          lamps[k].classList.toggle('on', k === key);
+          if (names[k]) names[k].hidden = (k !== key);
+        });
+        countEl.textContent = formatNumber(Math.ceil(acc + durations[key] - t));
+        return;
+      }
+      acc += durations[key];
+    }
+  }
+
+  function applyInputs() {
+    var changed = false;
+    ORDER.forEach(function (k) {
+      var v = parseInt(inputs[k].value, 10);
+      if (v >= 1 && v <= MAX_SECONDS && v !== durations[k]) {
+        durations[k] = v;
+        changed = true;
+      }
+    });
+    if (changed) {
+      start = Date.now();
+      tick();
+    }
+  }
+
+  ORDER.forEach(function (k) {
+    inputs[k].addEventListener('input', applyInputs);
+    // اگر خالی یا نامعتبر رها شد، به آخرین مقدار معتبر برگردد
+    inputs[k].addEventListener('blur', function () { inputs[k].value = durations[k]; });
+  });
+
+  document.getElementById('tl-reset').addEventListener('click', function () {
+    ORDER.forEach(function (k) {
+      durations[k] = DEFAULTS[k];
+      inputs[k].value = DEFAULTS[k];
+    });
+    start = Date.now();
+    tick();
+  });
+
+  tick();
+  setInterval(tick, 200);
+})();
+</script>
 <script src="folders/js/main.js"></script>
 </body>
 </html>
